@@ -1,0 +1,32 @@
+html {
+	height: 100%;
+	overflow-y: hidden;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 0px;
+	margin-top: 0px;
+	padding-bottom: 30px;
+}
+
+body {
+	height: 100%;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	margin-bottom: 30px;
+	background-color: #111;
+	background-image: url("/starfield.png");
+	overflow-y: scroll;
+	scrollbar-color: #999 rgba(16, 16, 16, 0.6);
+}
+
+#content {
+	border: 5px solid green;
+	background-color: #111;
+	margin-left: 5px;
+	margin-top: 20px;
+	margin-right: 5px;
+	margin-bottom: 20px;
+	padding: 1px;
+	padding-bottom: 20px;
+}
