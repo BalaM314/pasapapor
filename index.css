@@ -69,3 +69,8 @@ button#theme-selector svg {
 #errorbox {
 	color: red;
 }
+
+footer {
+	position: absolute;
+	bottom: 20px;
+}
