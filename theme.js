@@ -6,13 +6,13 @@ function enableDarkMode() {
     localStorage.setItem("theme", "dark");
     content.classList.remove("lightTheme");
     content.classList.add("darkTheme");
-    icon.innerText = "dark_mode";
+    icon.innerText = "light_mode";
 }
 function enableLightMode() {
     localStorage.setItem("theme", "light");
     content.classList.remove("darkTheme");
     content.classList.add("lightTheme");
-    icon.innerText = "light_mode";
+    icon.innerText = "dark_mode";
 }
 switch (localStorage.getItem("theme")) {
     case "dark":
