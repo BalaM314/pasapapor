@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta property="og:title" content="Past Paper Opener" />
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://balam314.github.io/pasapapor" />
-	<meta name="description" content="For those who are tired of copying the url into a new tab and changing qp to ms.">
-	<meta property="og:description" content="For those who are tired of copying the url into a new tab and changing qp to ms.." />
-	<meta name="theme-color" content="#0000FF">
-	<title>Past Paper Opener</title>
-	<script defer src="pasapapor-opener.js"></script>
-	<script defer src="theme.js"></script>
-	<link rel="stylesheet" href="index.css">
-</head>
-<body>
-	<div id="content">
-		<button id="theme-selector">
-			<svg>
-				<path d="">
-			</svg>
-		</button>
-		<h1><center>CAIE Past Paper Opener</center></h1>
-		<p>for those who are tired of copying the url into a new tab and changing "qp" to "ms"</p>
-		<p>Type the paper information with the following format: (subject code) (season) (paper type) (paper code)</p>
-		<ul>
-			<li>(subject code): the 4 digit subject code</li>
-			<li>(season): the season followed by the last two digits of the year, like this: "w21"</li>
-			<li>(paper type): "qp" or "ms" or sometimes "in". If omitted, both qp and ms will be opened.</li>
-			<li>(paper code): the 2 digit paper code</li>
-		</ul>
-		<input type="text" id="pasapapor-select">
-		<div id="errorbox"></div>
-		<footer>By <a href="https://github.com/Rithish288">Rithish</a> and <a href="https://github.com/BalaM314">BalaM314</a>. <a href="https://github.com/BalaM314/pasapapor">Source code available</a>.</footer>
-	</div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Past Paper Opener" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://balam314.github.io/pasapapor" />
+        <meta name="description" content="For those who are tired of copying the url into a new tab and changing qp to ms.">
+        <meta property="og:description" content="For those who are tired of copying the url into a new tab and changing qp to ms.." />
+        <meta name="theme-color" content="#0000FF">
+        
+        <title>Past Paper Opener</title>
+        <script defer src="pasapapor-opener.js"></script>
+        <script defer src="theme.js"></script>
+        <link rel="stylesheet" href="index.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+    <body>
+        <div class="content lightTheme">
+            <button class="theme">
+                <span class="material-icons">dark_mode</span>
+            </button>
+            <h1>CAIE Past Paper Opener</h1>
+            <p>For those who are tired of copying the url into a new tab and changing "qp" to "ms"</p>
+            <p>Type the paper information with the following format: (subject code) (season) (paper type) (paper code)</p>
+            <ul>
+                <li>(subject code): the 4 digit subject code</li>
+                <li>(season): the season followed by the last two digits of the year, like this: "w21"</li>
+                <li>(paper type): "qp" or "ms" or sometimes "in". If omitted, both qp and ms will be opened.</li>
+                <li>(paper code): the 2 digit paper code</li>
+            </ul>
+            <input type="text" id="pasapapor-select" placeholder="(9231 w21 qp 43)">
+            <div id="errorbox"></div>
+            <footer>By <a href="https://github.com/Rithish288">Rithish</a> and <a href="https://github.com/BalaM314">BalaM314</a>. <a href="https://github.com/BalaM314/pasapapor">Source code available</a>.</footer>
+        </div>
+    </body>
 </html>

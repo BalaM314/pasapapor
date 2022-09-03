@@ -1,7 +1,7 @@
 let darkMode = localStorage.getItem("darkTheme");
-const main = document.querySelector("div.content");
-const toggleBtn = document.querySelector("button.theme");
-const icon = document.querySelector("span.material-icons");
+const main = document.querySelector("div.content") as HTMLDivElement;
+const toggleBtn = document.querySelector("button.theme") as HTMLButtonElement;
+const icon = document.querySelector("span.material-icons") as HTMLSpanElement;
 icon.innerText = "dark_mode";
 
 function enableDarkMode() {

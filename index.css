@@ -1,76 +1,96 @@
-html {
-	height: 100%;
-	overflow-y: hidden;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 0px;
-	margin-top: 0px;
-	padding-bottom: 30px;
+* {
+	padding: 0px;
+	margin: 0px;
+	box-sizing: border-box;
 }
 
-:root {
-	--bg-color: #fff;
-	--text-color: #111;
-	--PI: 3.14159365358979323em;
+html, body {
+	height: 100%;
 }
 
 body {
-	height: 100%;
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 0px;
-	margin-bottom: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	background-image: url("https://balam314.github.io/starfield.png");
-	background-color: black; /*A placeholder to prevent a while flash as the image loads*/
-	overflow-y: scroll;
-	scrollbar-color: #999 rgba(16, 16, 16, 0.6);
+	background-color: black;
+}
+
+div.content.lightTheme {
+	background-color: #e7e7e7;
+	color: black;
+}
+
+div.content.darkTheme {
+	background-color: #272727;
+	color: white
+}
+
+div.content.lightTheme input {
+	box-shadow: inset 0 0 1000px #e7e7e7;
+	color: black;
+}
+
+div.content.darkTheme input {
+	box-shadow: inset 0 0 1000px #272727;
+	color: white
+}
+
+div.content {
+	width: 90vw;
+	min-width: 400px;
+	min-height: 90vh;
+	padding: 2em 2em;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+div.content h1 {
+	margin-inline:auto;
+	width: fit-content;
+}
+
+div.content ul li {
+	padding: 0.5em 1em;
+}
+
+div.content input {
+	outline: none;
+	height: 42px;	
 	font-size: large;
-	font-family: sans-serif;
+	width: 40%;
+	min-width: 200px;
 }
 
-#content {
-	border: 5px solid blue;
-	margin-left: 5px;
-	margin-top: 20px;
-	margin-right: 5px;
-	margin-bottom: 20px;
-	padding: 10px;
-	padding-bottom: 20px;
-	background: var(--background-primary);
-	color: var(--text-primary);
-	height: 80%;
+div.content footer {
+	display: block;
+	margin-top: auto;
+}
+button.theme {
+	position: relative;
+	display: inline;
+	margin-left: auto;
+	width: 3em;
+	background-color: rgb(222, 222, 222);
+	height: 3em;
+	display: grid;
+	place-content: center;
+	border-radius: 50%;
+	outline: none;
+	cursor: pointer;
+	border: none;
+	transition: box-shadow 400ms ease;
 }
 
-body.lightTheme {
-	--background-primary: #FFFC;
-	--text-primary: black;
+div.lightTheme button:hover {
+	box-shadow: 0 0 7px -1px grey;
 }
 
-body.darkTheme {
-	--background-primary: #222C;
-	--text-primary: white;
+div.darkTheme button:hover {
+	box-shadow: 0 0 19px -1px black;
 }
 
-button#theme-selector {
-	float: right;
-	z-index: 10;
-	width: 3.8em;
-	height: 3.8em;
-	padding: 0px;
-	background-color: #999;
-	border-radius: 5px;
-}
-
-button#theme-selector svg {
-	width: 100%;
-	height: 100%;
-}
-
-#errorbox {
-	color: red;
-}
-
-footer {
-	position: absolute;
-	bottom: 20px;
+button:active {
+	filter:brightness(0.8)
 }
