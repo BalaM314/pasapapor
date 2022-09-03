@@ -1,27 +1,41 @@
-let darkMode = localStorage.getItem("darkTheme");
-const main = document.querySelector("div.content");
+"use strict";
+const content = document.querySelector("div.content");
 const toggleBtn = document.querySelector("button.theme");
 const icon = document.querySelector("span.material-icons");
-icon.innerText = "dark_mode";
-
 function enableDarkMode() {
-	localStorage.setItem('darkTheme', 'enabled');
-	main.classList.remove('lightTheme');
-	main.classList.add('darkTheme');
-	icon.innerText = "light_mode";
+    localStorage.setItem("theme", "dark");
+    content.classList.remove("lightTheme");
+    content.classList.add("darkTheme");
+    icon.innerText = "dark_mode";
 }
-
-function disableDarkMode() {
-	localStorage.setItem('darkTheme', '')
-	main.classList.remove('darkTheme');
-	main.classList.add('lightTheme');
-	icon.innerText = "dark_mode";
+function enableLightMode() {
+    localStorage.setItem("theme", "light");
+    content.classList.remove("darkTheme");
+    content.classList.add("lightTheme");
+    icon.innerText = "light_mode";
 }
-
-
-if(darkMode === 'enabled') enableDarkMode()
-	toggleBtn.addEventListener("click", () => {
-	darkMode = localStorage.getItem('darkTheme')
-	if (darkMode !== 'enabled') enableDarkMode()
-	else disableDarkMode();
-})
+switch (localStorage.getItem("theme")) {
+    case "dark":
+        enableDarkMode();
+        break;
+    case "light":
+        enableLightMode();
+        break;
+    case null:
+        enableDarkMode();
+        break;
+    default:
+        console.warn(`Invalid theme ${localStorage.getItem("theme")}`);
+        enableDarkMode();
+        break;
+}
+toggleBtn.addEventListener("click", () => {
+    if (localStorage.getItem("theme") == "light")
+        enableDarkMode();
+    else if (localStorage.getItem("theme") == "dark")
+        enableLightMode();
+    else {
+        console.warn("Theme is invalid");
+        enableDarkMode();
+    }
+});
