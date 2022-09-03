@@ -7,12 +7,13 @@ interface SubjectData {
 	name: string;
 }
 
-const enum Level {
-	IGCSE, A_LEVELS
+enum Level {
+	IGCSE = "Cambridge IGCSE",
+	A_LEVELS = "A Levels"
 }
 
 interface SubjectMapping {
-	[id: string]: SubjectData;
+	[id: string]: SubjectData | undefined;
 }
 
 function getSubjectData():[id:string, name:string][] {
@@ -24,15 +25,41 @@ function getSubjectData():[id:string, name:string][] {
 function getSubjectMapping():SubjectMapping {
 	return Object.fromEntries(
 		getSubjectData()
-		.map(([id, name]) => ({
+		.map(([id, name]) => ([id, {
 			level: Level.A_LEVELS,
 			name
-		}))
+		}]))
 	);
 }
 
-function getURL({subjectMapping:SubjectMapping, papersSource:string, subjectID:string, year:string, season:string, type:string, code:string}):string {
-	return `${papersSource}/`
+/**
+ * Gets a url given all data
+ * @param subjectName The string name of the subject, example: Mathematics - Further (9231)
+ * @param subjectID The numerical id of the subject, example: 9231
+ * @param year The full year of the paper, example: 2021
+ * @param season The season of the paper with year, example: w21
+ * @param type The type of paper, example: qp, ms
+ * @param code The paper code, example: 43
+ * @returns The url to the paper
+ */
+const urlForData = (level:Level, subjectName:string, subjectID:string, year:string, season:string, type:string, code:string) =>
+	`https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}_${code}.pdf`;
+
+/**
+ * Gets the url of the paper given all required information
+ */
+function getPaperUrlFromData(subjectMapping:SubjectMapping, subjectID:string, season:string, type:string, code:string):string {
+	const data = subjectMapping[subjectID];
+	if(!data) throw new Error(`Unknown subject id "${subjectID}"`);
+	return urlForData(data.level, data.name, subjectID, `20${season.slice(1)}`, season, type, code);
+}
+
+function getPaperUrlFromInput(input:string):string[] {
+	const subjectMapping = getSubjectMapping();
+	const matchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d\d)[^\d\n]*?([a-zA-Z]{2})[^\d\n]*?(\d\d)/);
+	if(matchData == null || matchData.length != 5) throw new Error("Please enter the paper info like this: 9231 w21 qp 31");
+	let [, subjectID, season, type, code] = matchData;
+	return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, type, code))];
 }
 
 

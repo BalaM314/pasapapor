@@ -14,19 +14,23 @@ body {
 	margin-right: 0px;
 	margin-top: 0px;
 	margin-bottom: 30px;
-	background-color: #111;
-	background-image: url("/starfield.png");
+	background-image: url("https://balam314.github.io/starfield.png");
 	overflow-y: scroll;
 	scrollbar-color: #999 rgba(16, 16, 16, 0.6);
+	color: white;
 }
 
 #content {
 	border: 5px solid green;
-	background-color: #111;
+	background-color: #011C;
 	margin-left: 5px;
 	margin-top: 20px;
 	margin-right: 5px;
 	margin-bottom: 20px;
-	padding: 1px;
+	padding: 10px;
 	padding-bottom: 20px;
+}
+
+h1 {
+	color: #8FF;
 }
