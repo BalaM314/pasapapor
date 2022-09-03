@@ -50,8 +50,8 @@ body.darkTheme {
 }
 
 button#theme-selector {
-	position: absolute;
-	top: 40px; right: 40px;
+	float: right;
+	z-index: 10;
 	width: 3.8em;
 	height: 3.8em;
 	padding: 0px;
