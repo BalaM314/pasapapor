@@ -4,6 +4,15 @@
 	box-sizing: border-box;
 }
 
+:root {
+	--light-theme-text: black;
+	--light-theme-background: #e7e7e7;
+	--dark-theme-text: white;
+	--dark-theme-background: #222B;
+	--error-color: #d20000;
+	--header-text: yellowgreen;
+}
+
 html, body {
 	height: 100%;
 }
@@ -17,24 +26,23 @@ body {
 }
 
 div.content.lightTheme {
-	background-color: #e7e7e7;
-	color: black;
+	background-color: var(--light-theme-background);
+	color: var(--light-theme-text);
 }
 
 div.content.darkTheme {
-	background-color: #222B;
-	color: white
+	background-color: var(--dark-theme-background);
+	color: var(--dark-theme-text);
 }
 
 div.content.lightTheme input {
-	box-shadow: inset 0 0 1000px #e7e7e7;
-	color: black;
+	background-color: inset 0 0 1000px var(--light-theme-background);
+	color: var(--light-theme-text);
 }
 
 div.content.darkTheme input {
-	box-shadow: inset 0 0 1000px #272727;
-	color: white;
-	background-color: black;
+	color: var(--dark-theme-text);
+	background-color: var(--dark-theme-background);
 }
 
 div.content {
@@ -91,6 +99,10 @@ div.darkTheme button:hover {
 	box-shadow: 0 0 19px -1px black;
 }
 
+div#errorbox {
+	color: var(--error-color);
+}
+
 button:active {
 	filter:brightness(0.8)
 }
@@ -100,7 +112,7 @@ button:active {
 	font-size: 2em;
 	font-weight: bold;
 	text-align: center;
-	color: yellowgreen;
+	color: var(--header-text);
 }
 
 #header {
