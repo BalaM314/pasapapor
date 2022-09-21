@@ -52,12 +52,14 @@ function getPaperUrlFromData(subjectMapping, subjectID, season, type, code) {
 }
 function getPaperUrlFromInput(input) {
     const subjectMapping = getSubjectMapping();
-    const matchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d\d)[^\d\n]*?([a-zA-Z]{2})[^\d\n]*?(\d\d)/);
+    const matchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d?\d)[^\d\n]*?([a-zA-Z]{2})[^\d\n]*?(\d\d)/);
     if (matchData == null || matchData.length != 5) {
-        const shorterMatchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d\d)[^\d\n]*?(\d\d)/);
+        const shorterMatchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d\d)[^\d\n]*?(\d?\d)/);
         if (shorterMatchData == null || shorterMatchData.length != 4)
             throw new Error("Improperly formatted input.");
         let [, subjectID, season, code] = shorterMatchData;
+        if (parseInt(season.slice(1)) <= 9)
+            code = code.charAt(0);
         return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code)), encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code))];
     }
     let [, subjectID, season, type, code] = matchData;
