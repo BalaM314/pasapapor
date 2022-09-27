@@ -45,6 +45,14 @@ div.content.darkTheme input {
 	background-color: var(--dark-theme-background);
 }
 
+div.content.darkTheme a {
+	color: lightblue;
+}
+
+div.content.darkTheme a:visited {
+	color: #C000C0;
+}
+
 div.content {
 	width: 90vw;
 	min-width: 400px;
