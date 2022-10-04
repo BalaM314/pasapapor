@@ -29,7 +29,7 @@ function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string,
 }
 
 function guessData(name:string, mapping:SubjectMapping, level:Level):[string, SubjectData][] {
-	return Object.entries(mapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll("- ", "").includes(name.toLowerCase()));
+	return Object.entries(mapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
 }
 
 function getIDFromName(name:string, mapping:SubjectMapping, level:Level):string {

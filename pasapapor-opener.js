@@ -17,7 +17,7 @@ function getSubjectData() {
     ];
 }
 function guessData(name, mapping, level) {
-    return Object.entries(mapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll("- ", "").includes(name.toLowerCase()));
+    return Object.entries(mapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
 }
 function getIDFromName(name, mapping, level) {
     if (shorthandSubjectNames[level][name.toLowerCase()])
