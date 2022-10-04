@@ -80,8 +80,8 @@ function getPaperUrlFromInput(input) {
         if (!code)
             never();
         return [
-            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code)),
-            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code))
+            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code)),
+            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code))
         ];
     }
     else {
