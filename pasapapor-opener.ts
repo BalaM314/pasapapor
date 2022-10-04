@@ -71,7 +71,7 @@ function getPaperUrlFromInput(input:string):string[] {
 	const subjectMapping = getSubjectMapping();
 	const regularMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*?$/);
 	const shortMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
-	const gtMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?gt[ \-_]*?$/);
+	const gtMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(gt)[ \-_]*?$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		[, subjectID, season, type, code] = regularMatchData;
