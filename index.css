@@ -53,6 +53,10 @@ div.content.darkTheme a:visited {
 	color: #C000C0;
 }
 
+div.content.lightTheme input {
+	border: 2px inset ThreeDDarkShadow;
+}
+
 div.content {
 	width: 90vw;
 	min-width: 400px;

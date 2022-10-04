@@ -40,7 +40,9 @@ function getSubjectMapping() {
  * @param code The paper code, example: 43
  * @returns The url to the paper
  */
-const urlForData = (level, subjectName, subjectID, year, season, type, code) => `https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}_${code}.pdf`;
+const urlForData = (level, subjectName, subjectID, year, season, type, code) => code ?
+    `https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}_${code}.pdf` :
+    `https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}.pdf`;
 /**
  * Gets the url of the paper given all required information
  */
@@ -52,18 +54,39 @@ function getPaperUrlFromData(subjectMapping, subjectID, season, type, code) {
 }
 function getPaperUrlFromInput(input) {
     const subjectMapping = getSubjectMapping();
-    const matchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d?\d)[^\d\n]*?([a-zA-Z]{2})[^\d\n]*?(\d\d)/);
-    if (matchData == null || matchData.length != 5) {
-        const shorterMatchData = input.match(/(\d\d\d\d)[^\d\n]*?([wsmj](?:20)?\d\d)[^\d\n]*?(\d?\d)/);
-        if (shorterMatchData == null || shorterMatchData.length != 4)
-            throw new Error("Improperly formatted input.");
-        let [, subjectID, season, code] = shorterMatchData;
-        if (parseInt(season.slice(1)) <= 9)
-            code = code.charAt(0);
-        return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code)), encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code))];
+    const regularMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*?$/);
+    const shortMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
+    const gtMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?gt[ \-_]*?$/);
+    let subjectID, season, type, code;
+    if (regularMatchData != null) {
+        [, subjectID, season, type, code] = regularMatchData;
     }
-    let [, subjectID, season, type, code] = matchData;
-    return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, type, code))];
+    else if (shortMatchData != null) {
+        [, subjectID, season, code] = shortMatchData;
+    }
+    else if (gtMatchData != null) {
+        [, subjectID, season, type] = gtMatchData;
+    }
+    else {
+        throw new Error("Improperly formatted input.");
+    }
+    if (parseInt(season.slice(1)) <= 9 && code) {
+        if (code.startsWith("0"))
+            code = code.charAt(1);
+        else
+            code = code.charAt(0);
+    }
+    if (!type) {
+        if (!code)
+            never();
+        return [
+            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code)),
+            encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code))
+        ];
+    }
+    else {
+        return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, type, code))];
+    }
 }
 window.onload = () => {
     pasapaporInput.addEventListener("keydown", (e) => {
@@ -88,3 +111,4 @@ window.onload = () => {
     pasapaporInput.focus();
     pasapaporInput.select();
 };
+function never() { throw new Error("code failed"); }
