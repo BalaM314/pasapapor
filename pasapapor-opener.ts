@@ -70,15 +70,15 @@ function getPaperUrlFromData(subjectMapping:SubjectMapping, subjectID:string, se
 function getPaperUrlFromInput(input:string):string[] {
 	const subjectMapping = getSubjectMapping();
 	const regularMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*?$/);
-	const shortMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
-	const gtMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(gt)[ \-_]*?$/);
+	const typeOmittedMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
+	const codelessMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(gt|er)[ \-_]*?$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		[, subjectID, season, type, code] = regularMatchData;
-	} else if(shortMatchData != null){
-		[, subjectID, season, code] = shortMatchData;
-	} else if(gtMatchData != null){
-		[, subjectID, season, type] = gtMatchData;
+	} else if(typeOmittedMatchData != null){
+		[, subjectID, season, code] = typeOmittedMatchData;
+	} else if(codelessMatchData != null){
+		[, subjectID, season, type] = codelessMatchData;
 	} else {
 		throw new Error("Improperly formatted input.");
 	}
