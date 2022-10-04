@@ -85,7 +85,8 @@ const shorthandSubjectNames = ((data:{
 		"9093": ["eng", "english", "el"],
 		"8021": ["ge"],
 		"9618": ["cs", "compsci"],
-		"9231": ["further math", "f math", "math f", "math further", "meth"]
+		"9231": ["further math", "f math", "math f", "math further", "meth"],
+		"9990": ["psy", "psych", "psycho", "psychology"],
 	},
 });
 
