@@ -1,6 +1,7 @@
 
 const papersSource = "https://papers.gceguide.com";
 const pasapaporInput = <HTMLInputElement>document.querySelector("#pasapapor-select");
+const levelSelectDiv = <HTMLDivElement>document.querySelector("#level-select");
 const errorbox = <HTMLDivElement>document.querySelector("#errorbox");
 
 
@@ -43,6 +44,37 @@ function getSubjectMapping():SubjectMapping {
 	]);
 }
 
+const shorthandSubjectNames = ((data:{
+	[L in Level]: {
+		[id:string]: string[];
+	}
+}) => Object.fromEntries(
+	Object.entries(data).map(
+		([l,d]) => [l, Object.fromEntries(
+			new Array<[string, string]>().concat(
+				...Object.entries(d).map(([id, shorthands]) => shorthands.map(s => [s, id] as [string, string]))
+			)
+		)]
+	)
+))({
+	[Level.IGCSE]: {
+		"0580": ["math", "mathematics"],
+		"0620": ["chem", "chemistry"],
+		"0625": ["phy", "phys", "physics"],
+		"0478": ["cs", "compsci"],
+	},
+	[Level.A_LEVELS]: {
+		"9700": ["bio", "biology"],
+		"9701": ["chem", "chemistry"],
+		"9702": ["phy", "phys", "physics"],
+		"9708": ["eco"],
+		"9709": ["math", "mathematics"],
+		"9093": ["eng", "english", "el"],
+		"8021": ["ge"],
+		"9618": ["cs", "compsci"],
+	},
+});
+
 /**
  * Gets a url given all data
  * @param subjectName The string name of the subject, example: Mathematics - Further (9231)
@@ -61,17 +93,25 @@ const urlForData = (level:Level, subjectName:string, subjectID:string, year:stri
 /**
  * Gets the url of the paper given all required information
  */
-function getPaperUrlFromData(subjectMapping:SubjectMapping, subjectID:string, season:string, type:string, code?:string):string {
-	const data = subjectMapping[subjectID];
-	if(!data) throw new Error(`Unknown subject id "${subjectID}"`);
-	return urlForData(data.level, data.name, subjectID, `20${season.slice(1)}`, season, type, code);
+function getPaperUrlFromData(subjectMapping:SubjectMapping, level:Level, subject:string, season:string, type:string, code?:string):string {
+	if(isNaN(parseInt(subject))) subject = shorthandSubjectNames[level][subject.toLowerCase()] ?? (() => {throw new Error(`Invalid subject shorthand "${subject}" for level "${level}"`)})();
+	const data = subjectMapping[subject];
+	if(!data) throw new Error(`Unknown subject id "${subject}"`);
+	return urlForData(data.level, data.name, subject, `20${season.slice(1)}`, season, type, code);
 }
 
-function getPaperUrlFromInput(input:string):string[] {
+function getSelectedLevel():Level | null{
+	const value = Array.from(levelSelectDiv.children).filter((el):el is HTMLInputElement => el instanceof HTMLInputElement && el.checked)[0]?.value;
+	if(value == "igcse") return Level.IGCSE;
+	if(value == "as/a") return Level.A_LEVELS;
+	else return null;
+}
+
+function getPaperUrlFromInput(input:string, level:Level):string[] {
 	const subjectMapping = getSubjectMapping();
-	const regularMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*?$/);
-	const typeOmittedMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
-	const codelessMatchData = input.match(/^[ \-_]*?(\d\d\d\d)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(gt|er)[ \-_]*?$/);
+	const regularMatchData = input.match(/^[ \-_]*?(\d\d\d\d|[a-zA-Z]+)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*?$/);
+	const typeOmittedMatchData = input.match(/^[ \-_]*?(\d\d\d\d|[a-zA-Z]+)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(\d\d)[ \-_]*?$/);
+	const codelessMatchData = input.match(/^[ \-_]*?(\d\d\d\d|[a-zA-Z]+)[ \-_]*?([wsmj](?:20[012]\d|[012]?\d))[ \-_]*?(gt|er)[ \-_]*?$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		[, subjectID, season, type, code] = regularMatchData;
@@ -89,11 +129,11 @@ function getPaperUrlFromInput(input:string):string[] {
 	if(!type){
 		if(!code) never();
 		return [
-			encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "ms", code)),
-			encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, "qp", code))
+			encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, "ms", code)),
+			encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, "qp", code))
 		];
 	} else {
-		return [encodeURI(getPaperUrlFromData(subjectMapping, subjectID, season, type, code))];
+		return [encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, type, code))];
 	}
 }
 
@@ -103,7 +143,7 @@ window.onload = () => {
 		if(e.key == "Enter"){
 			try {
 				if(pasapaporInput.value.includes("amogus")) throw new Error("Too sus.");
-				const urls = getPaperUrlFromInput(pasapaporInput.value);
+				const urls = getPaperUrlFromInput(pasapaporInput.value, getSelectedLevel() ?? Level.IGCSE);
 				if(urls.length == 1) window.open(urls[0]);
 				else urls.forEach(url => window.open(url, "_blank"));
 				errorbox.innerText = "";
