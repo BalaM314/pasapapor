@@ -102,9 +102,9 @@ function getSelectedLevel() {
 }
 function getPaperUrlFromInput(input, level) {
     const subjectMapping = getSubjectMapping();
-    const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
-    const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
-    const codelessMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(gt|er)[ \-_]*$/);
+    const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
+    const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
+    const codelessMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(gt|er)[ \-_]*$/);
     let subjectID, season, type, code;
     if (regularMatchData != null) {
         [, subjectID, season, type, code] = regularMatchData;
