@@ -14,6 +14,10 @@ const shorthandSubjectNames = ((data) => Object.fromEntries(Object.entries(data)
         "0620": ["chem", "chemistry"],
         "0625": ["phy", "phys", "physics"],
         "0478": ["cs", "compsci"],
+        "0610": ["bio", "biology"],
+        "0455": ["eco", "economics"],
+        "0500": ["eng", "english", "el"],
+        "0606": ["meth", "add math", "addmath"]
     },
     [Level.A_LEVELS]: {
         "9700": ["bio", "biology"],
@@ -73,18 +77,32 @@ function getSubjectMapping() {
     ]);
 }
 function guessData(name, level) {
-    return Object.entries(subjectMapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
+    return Object.entries(subjectMapping)
+        .filter(([id, data]) => (level == null || data.level == level) &&
+        data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
 }
 function getIDFromName(name, level) {
-    if (shorthandSubjectNames[level][name.toLowerCase()])
-        return shorthandSubjectNames[level][name.toLowerCase()];
+    if (level == null) {
+        const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
+        const igcseGuess = shorthandSubjectNames[Level.IGCSE][name.toLowerCase()];
+        if (aLevelGuess && igcseGuess)
+            throw new Error(`Subject "${name}" could refer to either IGCSE or A Levels. Please specify using the radio buttons.`);
+        if (aLevelGuess)
+            return aLevelGuess;
+        if (igcseGuess)
+            return igcseGuess;
+    }
+    else {
+        if (shorthandSubjectNames[level][name.toLowerCase()])
+            return shorthandSubjectNames[level][name.toLowerCase()];
+    }
     const guesses = guessData(name, level);
     if (guesses.length == 1)
         return guesses[0][0];
     if (guesses.length == 0)
         throw new Error(`Unknown subject "${name}".`);
     if (guesses.length <= 5)
-        throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?`);
+        throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?${level == null ? " Specifying the level with the radio buttons may help." : ""}`);
     throw new Error(`Ambiguous subject "${name}".`);
 }
 function getSelectedLevel() {
@@ -137,14 +155,13 @@ function getPaporFromInput(input, level) {
 }
 window.onload = () => {
     pasapaporInput.addEventListener("keydown", (e) => {
-        var _a;
         if (!(e instanceof KeyboardEvent))
             never();
         if (e.key == "Enter") {
             try {
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
-                const urls = getPaporFromInput(pasapaporInput.value, (_a = getSelectedLevel()) !== null && _a !== void 0 ? _a : Level.IGCSE).map(papor => papor.url());
+                const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
                 if (urls.length == 1)
                     window.open(urls[0]);
                 else
