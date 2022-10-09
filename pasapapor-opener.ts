@@ -4,7 +4,6 @@ const pasapaporInput = <HTMLInputElement>document.querySelector("#pasapapor-sele
 const levelSelectDiv = <HTMLDivElement>document.querySelector("#level-select");
 const errorbox = <HTMLDivElement>document.querySelector("#errorbox");
 
-
 interface SubjectData {
 	level: Level;
 	name: string;
@@ -14,9 +13,30 @@ enum Level {
 	IGCSE = "Cambridge IGCSE",
 	A_LEVELS = "A Levels"
 }
+const subjectMapping = getSubjectMapping();
 
 interface SubjectMapping {
 	[id: string]: SubjectData;
+}
+
+class Papor {
+	year: string;
+	name: string;
+	level: Level;
+	constructor(public subjectID:string, public season:string, public type:string, public code?:string){
+		this.year = `20${season.slice(1)}`;
+		const data = subjectMapping[subjectID] ?? (() => {throw new Error(`Invalid subject id "${subjectID}"`);})();
+		this.name = data.name;
+		this.level = data.level;
+	}
+	url(){
+		return this.code ?
+		`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}_${this.code}.pdf` : 
+		`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}.pdf`
+	}
+	toString(){
+		return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
+	}
 }
 
 function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string, name:string][]] {
@@ -28,13 +48,13 @@ function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string,
 	];
 }
 
-function guessData(name:string, mapping:SubjectMapping, level:Level):[string, SubjectData][] {
-	return Object.entries(mapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
+function guessData(name:string, level:Level):[string, SubjectData][] {
+	return Object.entries(subjectMapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
 }
 
-function getIDFromName(name:string, mapping:SubjectMapping, level:Level):string {
+function getIDFromName(name:string, level:Level):string {
 	if(shorthandSubjectNames[level][name.toLowerCase()]) return shorthandSubjectNames[level][name.toLowerCase()];
-	const guesses = guessData(name, mapping, level);
+	const guesses = guessData(name, level);
 	if(guesses.length == 1) return guesses[0][0];
 	if(guesses.length == 0) throw new Error(`Unknown subject "${name}".`);
 	if(guesses.length <= 5) throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?`);
@@ -90,40 +110,15 @@ const shorthandSubjectNames = ((data:{
 	},
 });
 
-/**
- * Gets a url given all data
- * @param subjectName The string name of the subject, example: Mathematics - Further (9231)
- * @param subjectID The numerical id of the subject, example: 9231
- * @param year The full year of the paper, example: 2021
- * @param season The season of the paper with year, example: w21
- * @param type The type of paper, example: qp, ms
- * @param code The paper code, example: 43
- * @returns The url to the paper
- */
-const urlForData = (level:Level, subjectName:string, subjectID:string, year:string, season:string, type:string, code?:string) =>
-	code ?
-	`https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}_${code}.pdf` : 
-	`https://papers.gceguide.com/${level}/${subjectName}/${year}/${subjectID}_${season}_${type}.pdf`;
 
-/**
- * Gets the url of the paper given all required information
- */
-function getPaperUrlFromData(subjectMapping:SubjectMapping, level:Level, subject:string, season:string, type:string, code?:string):string {
-	if(isNaN(parseInt(subject))) subject = getIDFromName(subject, subjectMapping, level);
-	const data = subjectMapping[subject];
-	if(!data) throw new Error(`Unknown subject id "${subject}"`);
-	return urlForData(data.level, data.name, subject, `20${season.slice(1)}`, season, type, code);
-}
-
-function getSelectedLevel():Level | null{
+function getSelectedLevel():Level | null {
 	const value = Array.from(levelSelectDiv.children).filter((el):el is HTMLInputElement => el instanceof HTMLInputElement && el.checked)[0]?.value;
 	if(value == "igcse") return Level.IGCSE;
 	if(value == "as/a") return Level.A_LEVELS;
 	else return null;
 }
 
-function getPaperUrlFromInput(input:string, level:Level):string[] {
-	const subjectMapping = getSubjectMapping();
+function getPaporFromInput(input:string, level:Level):Papor[] {
 	const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
 	const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
 	const codelessMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(gt|er)[ \-_]*$/);
@@ -141,14 +136,15 @@ function getPaperUrlFromInput(input:string, level:Level):string[] {
 		if(code.startsWith("0")) code = code.charAt(1);
 		else code = code.charAt(0);
 	}
+	if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
 	if(!type){
 		if(!code) never();
 		return [
-			encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, "ms", code)),
-			encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, "qp", code))
+			new Papor(subjectID, season, "ms", code),
+			new Papor(subjectID, season, "qp", code)
 		];
 	} else {
-		return [encodeURI(getPaperUrlFromData(subjectMapping, level, subjectID, season, type, code))];
+		return [new Papor(subjectID, season, type, code)];
 	}
 }
 
@@ -158,7 +154,7 @@ window.onload = () => {
 		if(e.key == "Enter"){
 			try {
 				if(pasapaporInput.value.includes("amogus")) throw new Error("Too sus.");
-				const urls = getPaperUrlFromInput(pasapaporInput.value, getSelectedLevel() ?? Level.IGCSE);
+				const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel() ?? Level.IGCSE).map(papor => papor.url());
 				if(urls.length == 1) window.open(urls[0]);
 				else urls.forEach(url => window.open(url, "_blank"));
 				errorbox.innerText = "";
