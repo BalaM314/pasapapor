@@ -1,5 +1,4 @@
 "use strict";
-const papersSource = "https://papers.gceguide.com";
 const pasapaporInput = document.querySelector("#pasapapor-select");
 const levelSelectDiv = document.querySelector("#level-select");
 const errorbox = document.querySelector("#errorbox");
@@ -9,6 +8,26 @@ var Level;
     Level["A_LEVELS"] = "A Levels";
 })(Level || (Level = {}));
 const subjectMapping = getSubjectMapping();
+const shorthandSubjectNames = ((data) => Object.fromEntries(Object.entries(data).map(([l, d]) => [l, Object.fromEntries(new Array().concat(...Object.entries(d).map(([id, shorthands]) => shorthands.map(s => [s, id]))))])))({
+    [Level.IGCSE]: {
+        "0580": ["math", "mathematics"],
+        "0620": ["chem", "chemistry"],
+        "0625": ["phy", "phys", "physics"],
+        "0478": ["cs", "compsci"],
+    },
+    [Level.A_LEVELS]: {
+        "9700": ["bio", "biology"],
+        "9701": ["chem", "chemistry"],
+        "9702": ["phy", "phys", "physics"],
+        "9708": ["eco"],
+        "9709": ["math", "mathematics"],
+        "9093": ["eng", "english", "el"],
+        "8021": ["ge"],
+        "9618": ["cs", "compsci"],
+        "9231": ["further math", "f math", "math f", "math further", "meth"],
+        "9990": ["psy", "psych", "psycho", "psychology"],
+    },
+});
 class Papor {
     constructor(subjectID, season, type, code) {
         var _a;
@@ -38,21 +57,6 @@ function getSubjectData() {
         [["9706", "Accounting (9706)"], ["9679", "Afrikaans (9679)"], ["8779", "Afrikaans - First Language (AS Level only) (8779)"], ["8679", "Afrikaans - Language (AS Level only) (8679)"], ["9713", "Applied Information and Communication Technology (9713)"], ["9680", "Arabic (9680)"], ["8680", "Arabic - Language (AS Level only) (8680)"], ["9479", "Art & Design (9479)"], ["9704", "Art & Design (9704)"], ["9700", "Biology (9700)"], ["9609", "Business (9609)"], ["9707", "Business Studies (9707)"], ["9980", "Cambridge International Project Qualification (9980)"], ["9701", "Chemistry (9701)"], ["9715", "Chinese (A Level only) (9715)"], ["8681", "Chinese - Language (AS Level only) (8681)"], ["9274", "Classical Studies (9274)"], ["9608", "Computer Science (for final examination in 2021) (9608)"], ["9618", "Computer Science (for first examination in 2021) (9618)"], ["9691", "Computing (9691)"], ["9631", "Design & Textiles (9631)"], ["9705", "Design and Technology (9705)"], ["9481", "Digital Media & Design (9481)"], ["9011", "Divinity (9011)"], ["8041", "Divinity (AS Level only) (8041)"], ["9482", "Drama (9482)"], ["9708", "Economics (9708)"], ["9093", "English - Language AS and A Level (9093)"], ["9093", "English - Language AS and A Level (9093)"], ["8695", "English - Language and Literature (AS Level only) (8695)"], ["9695", "English - Literature (9695)"], ["8021", "English General Paper (AS Level only) (8021)"], ["8291", "Environmental Management (AS only) (8291)"], ["9336", "Food Studies (9336)"], ["9716", "French (A Level only) (9716)"], ["8682", "French - Language (AS Level only) (8682)"], ["8670", "French - Literature (AS Level only) (8670)"], ["8001", "General Paper 8001 (AS Level only) (8001)"], ["8004", "General Paper 8004 (AS Level only) (8004)"], ["9696", "Geography (9696)"], ["9717", "German (A Level only) (9717)"], ["8683", "German - Language (AS Level only) (8683)"], ["9239", "Global Perspectives & Research (9239)"], ["9687", "Hindi (A Level only) (9687)"], ["8687", "Hindi - Language (AS Level only) (8687)"], ["8675", "Hindi - Literature (AS Level only) (8675)"], ["9014", "Hinduism (9014)"], ["9487", "Hinduism (9487)"], ["8058", "Hinduism (AS level only) (8058)"], ["9489", "History (9489)"], ["9389", "History (for final examination in 2021) (9389)"], ["9626", "Information Technology (9626)"], ["9488", "Islamic Studies (9488)"], ["8281", "Japanese Language (AS Level only) (8281)"], ["9084", "Law (9084)"], ["9693", "Marine Science (9693)"], ["9709", "Mathematics (9709)"], ["9231", "Mathematics - Further (9231)"], ["9607", "Media Studies (9607)"], ["9483", "Music (9483)"], ["9703", "Music (9703)"], ["8663", "Music (AS Level only) (8663)"], ["8024", "Nepal Studies (AS Level only) (8024)"], ["9396", "Physical Education (9396)"], ["9702", "Physics (9702)"], ["9718", "Portuguese (A Level only) (9718)"], ["8684", "Portuguese - Language (AS Level only) (8684)"], ["8672", "Portuguese - Literature (AS Level only) (8672)"], ["9698", "Psychology (9698)"], ["9990", "Psychology (9990)"], ["9699", "Sociology (9699)"], ["9719", "Spanish (A Level only) (9719)"], ["8665", "Spanish - First Language (AS Level only) (8665)"], ["8685", "Spanish - Language (AS Level only) (8685)"], ["8673", "Spanish - Literature (AS Level only) (8673)"], ["9689", "Tamil (9689)"], ["8689", "Tamil - Language (AS Level only) (8689)"], ["9694", "Thinking Skills (9694)"], ["9395", "Travel & Tourism (9395)"], ["9676", "Urdu (A Level only) (9676)"], ["8686", "Urdu - Language (AS Level only) (8686)"], ["9686", "Urdu - Pakistan only (A Level only) (9686)"]]
     ];
 }
-function guessData(name, level) {
-    return Object.entries(subjectMapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
-}
-function getIDFromName(name, level) {
-    if (shorthandSubjectNames[level][name.toLowerCase()])
-        return shorthandSubjectNames[level][name.toLowerCase()];
-    const guesses = guessData(name, level);
-    if (guesses.length == 1)
-        return guesses[0][0];
-    if (guesses.length == 0)
-        throw new Error(`Unknown subject "${name}".`);
-    if (guesses.length <= 5)
-        throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?`);
-    throw new Error(`Ambiguous subject "${name}".`);
-}
 function getSubjectMapping() {
     const subjectData = getSubjectData();
     return Object.fromEntries([
@@ -68,26 +72,21 @@ function getSubjectMapping() {
             }])),
     ]);
 }
-const shorthandSubjectNames = ((data) => Object.fromEntries(Object.entries(data).map(([l, d]) => [l, Object.fromEntries(new Array().concat(...Object.entries(d).map(([id, shorthands]) => shorthands.map(s => [s, id]))))])))({
-    [Level.IGCSE]: {
-        "0580": ["math", "mathematics"],
-        "0620": ["chem", "chemistry"],
-        "0625": ["phy", "phys", "physics"],
-        "0478": ["cs", "compsci"],
-    },
-    [Level.A_LEVELS]: {
-        "9700": ["bio", "biology"],
-        "9701": ["chem", "chemistry"],
-        "9702": ["phy", "phys", "physics"],
-        "9708": ["eco"],
-        "9709": ["math", "mathematics"],
-        "9093": ["eng", "english", "el"],
-        "8021": ["ge"],
-        "9618": ["cs", "compsci"],
-        "9231": ["further math", "f math", "math f", "math further", "meth"],
-        "9990": ["psy", "psych", "psycho", "psychology"],
-    },
-});
+function guessData(name, level) {
+    return Object.entries(subjectMapping).filter(([id, data]) => data.level == level && data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
+}
+function getIDFromName(name, level) {
+    if (shorthandSubjectNames[level][name.toLowerCase()])
+        return shorthandSubjectNames[level][name.toLowerCase()];
+    const guesses = guessData(name, level);
+    if (guesses.length == 1)
+        return guesses[0][0];
+    if (guesses.length == 0)
+        throw new Error(`Unknown subject "${name}".`);
+    if (guesses.length <= 5)
+        throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?`);
+    throw new Error(`Ambiguous subject "${name}".`);
+}
 function getSelectedLevel() {
     var _a;
     const value = (_a = Array.from(levelSelectDiv.children).filter((el) => el instanceof HTMLInputElement && el.checked)[0]) === null || _a === void 0 ? void 0 : _a.value;
@@ -98,6 +97,7 @@ function getSelectedLevel() {
     else
         return null;
 }
+function never() { throw new Error("code failed"); }
 function getPaporFromInput(input, level) {
     const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
     const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
@@ -139,7 +139,7 @@ window.onload = () => {
     pasapaporInput.addEventListener("keydown", (e) => {
         var _a;
         if (!(e instanceof KeyboardEvent))
-            throw new Error("impossible.");
+            never();
         if (e.key == "Enter") {
             try {
                 if (pasapaporInput.value.includes("amogus"))
@@ -159,4 +159,3 @@ window.onload = () => {
     pasapaporInput.focus();
     pasapaporInput.select();
 };
-function never() { throw new Error("code failed"); }
