@@ -54,9 +54,10 @@ class Papor {
 		this.level = data.level;
 	}
 	url(){
+		const filetype = this.type == "sf" ? "zip" : "pdf";
 		return this.code ?
-		`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}_${this.code}.pdf` : 
-		`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}.pdf`
+			`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}_${this.code}.${filetype}` : 
+			`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}.${filetype}`
 	}
 	toString(){
 		return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
