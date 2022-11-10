@@ -98,6 +98,32 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 		);
 }
 
+function validateSeason(season:string):string | null {
+	const matchData = season.match(/(\w)(\d{1,2})/);
+	if(matchData == null) return null;
+	let [seasonChar, year] = matchData;
+	let processedSeason:string;
+	let processedYear:string;
+	if(parseInt(year) <= 9){
+		processedYear = "0" + year.slice(-1);
+	} else {
+		processedYear = year;
+	}
+	switch(seasonChar){
+		case "f": case "m":
+			processedSeason = "m"; break;
+		case "j":
+			processedSeason = "j"; break;
+		case "s":
+			processedSeason = "s"; break;
+		case "w": case "o": case "n":
+			processedSeason = "w"; break;
+		default:
+			return null;
+	}
+	return processedSeason + processedYear;
+}
+
 function getIDFromName(name:string, level:Level | null):string {
 	if(level == null){
 		const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
