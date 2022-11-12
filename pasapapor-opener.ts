@@ -99,7 +99,7 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 }
 
 function validateSeason(season:string):string | null {
-	const matchData = season.match(/(\w)(\d{1,2})/);
+	const matchData = season.match(/([a-z])(\d{1,2})/i);
 	if(matchData == null) return null;
 	let [seasonChar, year] = matchData;
 	let processedSeason:string;
@@ -110,7 +110,7 @@ function validateSeason(season:string):string | null {
 		processedYear = year;
 	}
 	switch(seasonChar){
-		case "f": case "m":
+		case "m": case "f":
 			processedSeason = "m"; break;
 		case "j":
 			processedSeason = "j"; break;
@@ -151,9 +151,9 @@ function getSelectedLevel():Level | null {
 function never():never {throw new Error("code failed");}
 
 function getPaporFromInput(input:string, level:Level | null):Papor[] {
-	const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
-	const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
-	const codelessMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmj](?:20[012]\d|[012]?\d))[ \-_]*(gt|er)[ \-_]*$/);
+	const regularMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_]*(ci|er|ms|qp|in|sf|ir)[ \-_]*?(\d\d)[ \-_]*$/);
+	const typeOmittedMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_]*(\d\d)[ \-_]*$/);
+	const codelessMatchData = input.match(/^[ \-_]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_]*(gt|er)[ \-_]*$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		[, subjectID, season, type, code] = regularMatchData;
@@ -164,10 +164,7 @@ function getPaporFromInput(input:string, level:Level | null):Papor[] {
 	} else {
 		throw new Error("Improperly formatted input.");
 	}
-	if(parseInt(season.slice(1)) <= 9 && code){
-		if(code.startsWith("0")) code = code.charAt(1);
-		else code = code.charAt(0);
-	}
+	season = validateSeason(season) ?? (() => {throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`)})();
 	if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
 	if(!type){
 		if(!code) never();
