@@ -86,7 +86,7 @@ function validateSeason(season) {
     const matchData = season.match(/([a-z])(\d{1,2})/i);
     if (matchData == null)
         return null;
-    let [seasonChar, year] = matchData;
+    let [, seasonChar, year] = matchData;
     let processedSeason;
     let processedYear;
     if (parseInt(year) <= 9) {

@@ -101,7 +101,7 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 function validateSeason(season:string):string | null {
 	const matchData = season.match(/([a-z])(\d{1,2})/i);
 	if(matchData == null) return null;
-	let [seasonChar, year] = matchData;
+	let [, seasonChar, year] = matchData;
 	let processedSeason:string;
 	let processedYear:string;
 	if(parseInt(year) <= 9){
