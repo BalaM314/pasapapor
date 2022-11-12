@@ -1,6 +1,6 @@
-const content = document.querySelector("div.content") as HTMLDivElement;
-const toggleBtn = document.querySelector("button.theme") as HTMLButtonElement;
-const icon = document.querySelector("span.material-icons") as HTMLSpanElement;
+const content = getElement("div.content", HTMLDivElement);
+const toggleBtn = getElement("button.theme", HTMLButtonElement);
+const icon = getElement("span.material-icons", HTMLSpanElement);
 
 
 function enableDarkMode() {
