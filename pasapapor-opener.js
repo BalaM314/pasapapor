@@ -172,9 +172,11 @@ function getSelectedLevel() {
 function never() { throw new Error("code failed"); }
 function getPaporFromInput(input, level) {
     var _a;
-    const regularMatchData = input.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
-    const typeOmittedMatchData = input.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
-    const codelessMatchData = input.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
+    let lowercaseInput = input.toLowerCase();
+    const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
+    const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
+    const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
+    const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*$/);
     let subjectID, season, type, code;
     if (regularMatchData != null) {
         [, subjectID, season, type, code] = regularMatchData;
@@ -184,6 +186,22 @@ function getPaporFromInput(input, level) {
     }
     else if (codelessMatchData != null) {
         [, subjectID, season, type] = codelessMatchData;
+    }
+    else if (alternateMatchData != null) {
+        let m, s, w, year;
+        [, subjectID, code, m, s, w, year] = alternateMatchData;
+        if (m) {
+            season = `m${year}`;
+        }
+        else if (s) {
+            season = `s${year}`;
+        }
+        else if (w) {
+            season = `w${year}`;
+        }
+        else {
+            never();
+        }
     }
     else {
         throw new Error("Improperly formatted input.");
