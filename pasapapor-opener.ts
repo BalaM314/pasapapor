@@ -1,11 +1,15 @@
 
+//HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
 const levelSelectDiv = getElement("#level-select", HTMLDivElement);
 const errorbox = getElement("#errorbox", HTMLDivElement);
+
 enum Level {
 	IGCSE = "Cambridge IGCSE",
 	A_LEVELS = "A Levels"
 }
+
+//ASTs
 const subjectMapping = getSubjectMapping();
 const shorthandSubjectNames = ((data:{
 	[L in Level]: {
@@ -43,6 +47,8 @@ const shorthandSubjectNames = ((data:{
 		"9990": ["psy", "psych", "psycho", "psychology"],
 	},
 });
+
+/** Represents a pasapapor. */
 class Papor {
 	year: string;
 	name: string;
@@ -73,6 +79,7 @@ function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string,
 	];
 }
 
+/** Gets an HTML element of a particular type. */
 function getElement<T extends typeof Element>(selector:string, type:T):T["prototype"] {
 	const elements = Array.from(document.querySelectorAll(selector))
 		.filter((e):e is T["prototype"] => e instanceof type);
@@ -98,6 +105,7 @@ function getSubjectMapping():SubjectMapping {
 	]);
 }
 
+/** Guesses a subject based on input. */
 function guessData(name:string, level:Level | null):[string, SubjectData][] {
 	return Object.entries(subjectMapping)
 		.filter(
@@ -107,6 +115,7 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 		);
 }
 
+/** Validates a season, correcting it if it is "f22" or "w9". */
 function validateSeason(season:string):string | null {
 	const matchData = season.match(/([a-z])(\d{1,2})/i);
 	if(matchData == null) return null;
@@ -133,6 +142,7 @@ function validateSeason(season:string):string | null {
 	return processedSeason + processedYear;
 }
 
+/** Gets the subject id from entered string name. Throws if too many or no results. */
 function getIDFromName(name:string, level:Level | null):string {
 	if(level == null){
 		const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
@@ -187,9 +197,11 @@ function getPaporFromInput(input:string, level:Level | null):Papor[] {
 }
 
 window.onload = () => {
+	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
 		if(!(e instanceof KeyboardEvent)) never();
 		if(e.key == "Enter"){
+			//If it's enter, open papors
 			try {
 				if(pasapaporInput.value.includes("amogus")) throw new Error("Too sus.");
 				const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
