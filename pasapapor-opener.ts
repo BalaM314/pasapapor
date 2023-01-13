@@ -48,8 +48,12 @@ const shorthandSubjectNames = ((data:{
 	},
 });
 
+interface Openable {
+	url: () => string;
+}
+
 /** Represents a pasapapor. */
-class Papor {
+class Papor implements Openable {
 	year: string;
 	name: string;
 	level: Level;
@@ -68,6 +72,9 @@ class Papor {
 	toString(){
 		return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
 	}
+}
+
+class OtherDocument implements Openable {
 }
 
 function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string, name:string][]] {
@@ -169,8 +176,9 @@ function getSelectedLevel():Level | null {
 
 function never():never {throw new Error("code failed");}
 
-function getPaporFromInput(input:string, level:Level | null):Papor[] {
+function getPaporFromInput(input:string, level:Level | null):Openable[] {
 	let lowercaseInput = input.toLowerCase();
+	if(lowercaseInput == "mf19" return OtherDocument.mf19);
 	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
 	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
 	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
