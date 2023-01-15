@@ -57,6 +57,9 @@ class Papor {
         return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
     }
 }
+const otherDocuments = (d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, { url() { return v; } }])))({
+    mf19: "https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf"
+});
 function getSubjectData() {
     //JSON.stringify(Object.fromEntries(Array.from(temp0.children).map(el => [el.innerText.match(/\((\d+)\)/)?.[1], el.innerText]).filter(([id, text]) => id != undefined)));
     //Get this with an XMLHTTPRequest
@@ -173,6 +176,8 @@ function never() { throw new Error("code failed"); }
 function getPaporFromInput(input, level) {
     var _a;
     let lowercaseInput = input.toLowerCase();
+    if (otherDocuments[lowercaseInput])
+        return [otherDocuments[lowercaseInput]];
     const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
     const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
     const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);

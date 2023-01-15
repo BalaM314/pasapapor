@@ -74,8 +74,11 @@ class Papor implements Openable {
 	}
 }
 
-class OtherDocument implements Openable {
-}
+const otherDocuments: {
+	[index:string]: Openable
+} = (d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, {url(){return v;}}])))({
+	mf19: "https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf"
+});
 
 function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string, name:string][]] {
 	//JSON.stringify(Object.fromEntries(Array.from(temp0.children).map(el => [el.innerText.match(/\((\d+)\)/)?.[1], el.innerText]).filter(([id, text]) => id != undefined)));
@@ -178,7 +181,7 @@ function never():never {throw new Error("code failed");}
 
 function getPaporFromInput(input:string, level:Level | null):Openable[] {
 	let lowercaseInput = input.toLowerCase();
-	if(lowercaseInput == "mf19" return OtherDocument.mf19);
+	if(otherDocuments[lowercaseInput]) return [otherDocuments[lowercaseInput]];
 	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
 	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
 	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
