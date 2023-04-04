@@ -131,6 +131,7 @@ button:active {
 	font-weight: bold;
 	text-align: center;
 	color: var(--header-text);
+	user-select: none;
 }
 
 #header {
