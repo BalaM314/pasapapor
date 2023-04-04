@@ -2,6 +2,8 @@
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
 const levelSelectDiv = getElement("#level-select", HTMLDivElement);
+const buttonIgcse = getElement("input#igcse", HTMLInputElement);
+const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const errorbox = getElement("#errorbox", HTMLDivElement);
 var Level;
 (function (Level) {
@@ -237,11 +239,28 @@ window.onload = () => {
             try {
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
-                const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
-                if (urls.length == 1)
-                    window.open(urls[0]);
-                else
-                    urls.forEach(url => window.open(url, "_blank"));
+                switch (pasapaporInput.value.toLowerCase()) {
+                    case "as":
+                    case "a":
+                    case "as a":
+                    case "as/a":
+                    case "as / a":
+                        buttonAsa.click();
+                        pasapaporInput.value = "";
+                        break;
+                    case "ig":
+                    case "i":
+                    case "igcse":
+                        buttonIgcse.click();
+                        pasapaporInput.value = "";
+                        break;
+                    default:
+                        const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
+                        if (urls.length == 1)
+                            window.open(urls[0], "_blank");
+                        else
+                            urls.forEach(url => window.open(url, "_blank"));
+                }
                 errorbox.innerText = "";
             }
             catch (err) {
