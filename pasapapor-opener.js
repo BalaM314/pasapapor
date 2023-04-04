@@ -30,9 +30,9 @@ const shorthandSubjectNames = ((data) => Object.fromEntries(Object.entries(data)
         "9708": ["eco"],
         "9709": ["math", "mathematics"],
         "9093": ["eng", "english", "el"],
-        "8021": ["ge"],
+        "8021": ["ge", "eg", "egp"],
         "9618": ["cs", "compsci"],
-        "9231": ["further math", "f math", "math f", "math further", "meth"],
+        "9231": ["further math", "f math", "fmath", "math f", "mathf", "math further", "meth"],
         "9990": ["psy", "psych", "psycho", "psychology"],
     },
 });
@@ -242,6 +242,7 @@ window.onload = () => {
                 switch (pasapaporInput.value.toLowerCase()) {
                     case "as":
                     case "a":
+                    case "asa":
                     case "as a":
                     case "as/a":
                     case "as / a":
