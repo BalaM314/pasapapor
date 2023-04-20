@@ -181,7 +181,7 @@ function getPaporFromInput(input, level) {
     let lowercaseInput = input.toLowerCase();
     if (otherDocuments[lowercaseInput])
         return [otherDocuments[lowercaseInput]];
-    const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
+    const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir|pm)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
     const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
     const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
     const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*$/);
