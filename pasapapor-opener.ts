@@ -180,6 +180,16 @@ function getSelectedLevel():Level | null {
 	else return null;
 }
 
+function isTypeValid(subjectID:string, type:string):boolean {
+	switch(type){
+		case "qp": case "ms": case "er": return true;
+		case "ci": return true; //TODO finish
+		case "sf": return true; //source files, cs and ict
+		case "in": return true; //insert, cs and english
+		case "ir": return true;
+	}
+}
+
 function never():never {throw new Error("code failed");}
 
 function getPaporFromInput(input:string, level:Level | null):Openable[] {
