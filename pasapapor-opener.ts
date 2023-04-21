@@ -231,8 +231,11 @@ window.onload = () => {
 		if(e.key == "Enter"){
 			//If it's enter, open papors
 			try {
-				if(pasapaporInput.value.includes("amogus")) throw new Error("Too sus.");
-				switch(pasapaporInput.value.toLowerCase()){
+				if(pasapaporInput.value.includes("amogus"))
+					throw new Error("Too sus.");
+				else if(/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
+					window.open(`https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
+				else switch(pasapaporInput.value.toLowerCase()){
 					case "as": case "a": case "asa": case "as a": case "as/a": case "as / a":
 						buttonAsa.click(); pasapaporInput.value = ""; break;
 					case "ig": case "i": case "igcse":
