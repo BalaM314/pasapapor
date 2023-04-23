@@ -182,11 +182,13 @@ function getSelectedLevel():Level | null {
 
 function isTypeValid(subjectID:string, type:string):boolean {
 	switch(type){
-		case "qp": case "ms": case "er": return true;
-		case "ci": return true; //TODO finish
-		case "sf": return true; //source files, cs and ict
-		case "in": return true; //insert, cs and english
+		case "qp": case "ms": case "er": return true; //Examiner report, exists for all subjects
+		case "ci": return ["9700","9701","9702","0610","0970","0620","0971","0625","0972","0652","0652","0973","0654"].includes(subjectID); //confidential instructions, exists for all science practicals
+		case "sf": return ["9608","9618","0478","0984","0420","0417","0983"].includes(subjectID); //source files, cs and ict
+		//case "in": return ["9706","9679","8679","9680","8680","9479","9609","9715","8681"].includes(subjectID);
 		case "ir": return true;
+		case "pm": return ["9608","0984","0478"].includes(subjectID); //Prerelease material, only valid for old CS subjects
+		default: return true;
 	}
 }
 
