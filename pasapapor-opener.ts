@@ -180,14 +180,25 @@ function getSelectedLevel():Level | null {
 	else return null;
 }
 
-function isTypeValid(subjectID:string, type:string):boolean {
+function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
 	switch(type){
-		case "qp": case "ms": case "er": return true; //Examiner report, exists for all subjects
-		case "ci": return ["9700","9701","9702","0610","0970","0620","0971","0625","0972","0652","0652","0973","0654"].includes(subjectID); //confidential instructions, exists for all science practicals
-		case "sf": return ["9608","9618","0478","0984","0420","0417","0983"].includes(subjectID); //source files, cs and ict
-		//case "in": return ["9706","9679","8679","9680","8680","9479","9609","9715","8681"].includes(subjectID);
+		case "qp": case "ms": return true; //QP and MS exist for all subjects in almost all codes
+		case "er": case "gt": return code == undefined; //ER is for every component
+		case "ci": return !! ( //confidential instructions, exists for all science practicals
+			["9700","9701","9702"].includes(subjectID) && code?.match(/^3[1-6]$/) ||
+			["9700","9701","9702"].includes(subjectID) && code?.match(/^3[1-6]$/) ||
+			["0610","0970","0620","0971","0625","0972","0652","0973","0654"].includes(subjectID) && code?.match(/^5[1-3]$/)
+		);
+		case "sf": return !! ( //source files, cs and ict
+			["9608","9618"].includes(subjectID) && code?.match(/^4[1-3]$/) ||
+			["0417","0983"].includes(subjectID) && code?.match(/^[2-3][1-3]$/)
+		);
+		//case "in": return ["9706","9679","8679","9680","8680","9479","9609","9715","8681"].includes(subjectID); //Too many things have insert
 		case "ir": return true;
-		case "pm": return ["9608","0984","0478"].includes(subjectID); //Prerelease material, only valid for old CS subjects
+		case "pm": return !! (//Prerelease material, only valid for some CS subjects
+			["9608"].includes(subjectID) && code?.match(/^[24][1-3]$/) ||
+			["0984","0478"].includes(subjectID) && code?.match(/^2[1-3]$/)
+		);
 		default: return true;
 	}
 }
@@ -224,6 +235,7 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		throw new Error("Improperly formatted input.");
 	}
 	season = validateSeason(season) ?? (() => {throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`)})();
+	if(type && !isTypeValid(subjectID, type, code)) throw new Error(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
 	if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
 	if(!type){
 		if(!code) never();

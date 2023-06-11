@@ -175,6 +175,27 @@ function getSelectedLevel() {
     else
         return null;
 }
+function isTypeValid(subjectID, type, code) {
+    switch (type) {
+        case "qp":
+        case "ms": return true; //QP and MS exist for all subjects in almost all codes
+        case "er":
+        case "gt": return code == undefined; //ER is for every component
+        case "ci": return !!( //confidential instructions, exists for all science practicals
+        ["9700", "9701", "9702"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^3[1-6]$/)) ||
+            ["9700", "9701", "9702"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^3[1-6]$/)) ||
+            ["0610", "0970", "0620", "0971", "0625", "0972", "0652", "0973", "0654"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^5[1-3]$/)));
+        case "sf": return !!( //source files, cs and ict
+        ["9608", "9618"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^4[1-3]$/)) ||
+            ["0417", "0983"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^[2-3][1-3]$/)));
+        //case "in": return ["9706","9679","8679","9680","8680","9479","9609","9715","8681"].includes(subjectID); //Too many things have insert
+        case "ir": return true;
+        case "pm": return !!( //Prerelease material, only valid for some CS subjects
+        ["9608"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^[24][1-3]$/)) ||
+            ["0984", "0478"].includes(subjectID) && (code === null || code === void 0 ? void 0 : code.match(/^2[1-3]$/)));
+        default: return true;
+    }
+}
 function never() { throw new Error("code failed"); }
 function getPaporFromInput(input, level) {
     var _a;
@@ -215,6 +236,8 @@ function getPaporFromInput(input, level) {
         throw new Error("Improperly formatted input.");
     }
     season = (_a = validateSeason(season)) !== null && _a !== void 0 ? _a : (() => { throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`); })();
+    if (type && !isTypeValid(subjectID, type, code))
+        throw new Error(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
     if (isNaN(parseInt(subjectID)))
         subjectID = getIDFromName(subjectID, level);
     if (!type) {
@@ -239,29 +262,32 @@ window.onload = () => {
             try {
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
-                switch (pasapaporInput.value.toLowerCase()) {
-                    case "as":
-                    case "a":
-                    case "asa":
-                    case "as a":
-                    case "as/a":
-                    case "as / a":
-                        buttonAsa.click();
-                        pasapaporInput.value = "";
-                        break;
-                    case "ig":
-                    case "i":
-                    case "igcse":
-                        buttonIgcse.click();
-                        pasapaporInput.value = "";
-                        break;
-                    default:
-                        const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
-                        if (urls.length == 1)
-                            window.open(urls[0], "_blank");
-                        else
-                            urls.forEach(url => window.open(url, "_blank"));
-                }
+                else if (/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
+                    window.open(`https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
+                else
+                    switch (pasapaporInput.value.toLowerCase()) {
+                        case "as":
+                        case "a":
+                        case "asa":
+                        case "as a":
+                        case "as/a":
+                        case "as / a":
+                            buttonAsa.click();
+                            pasapaporInput.value = "";
+                            break;
+                        case "ig":
+                        case "i":
+                        case "igcse":
+                            buttonIgcse.click();
+                            pasapaporInput.value = "";
+                            break;
+                        default:
+                            const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
+                            if (urls.length == 1)
+                                window.open(urls[0], "_blank");
+                            else
+                                urls.forEach(url => window.open(url, "_blank"));
+                    }
                 errorbox.innerText = "";
             }
             catch (err) {
