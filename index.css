@@ -80,6 +80,7 @@ div.content ul li {
 	font-size: large;
 	width: 40%;
 	min-width: 200px;
+	padding: 5px;
 }
 
 #level-select {
@@ -139,4 +140,14 @@ button:active {
 	width: 100%;
 	grid-template-columns: 3em minmax(200px, 1fr) 3em;
 	margin-bottom: 30px;
+}
+
+a {
+	color: #00C400 !important;
+}
+a:hover {
+	color: #00EC00 !important;
+}
+a:active {
+	color: #0F0 !important;
 }
