@@ -235,8 +235,8 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		throw new Error("Improperly formatted input.");
 	}
 	season = validateSeason(season) ?? (() => {throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`)})();
-	if(type && !isTypeValid(subjectID, type, code)) throw new Error(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
 	if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
+	if(type && !isTypeValid(subjectID, type, code)) throw new Error(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
 	if(!type){
 		if(!code) never();
 		return [
