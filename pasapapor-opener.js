@@ -254,7 +254,7 @@ function getPaporFromInput(input, level) {
         return [new Papor(subjectID, season, type, code)];
     }
 }
-window.onload = () => {
+function addListeners() {
     //When a key is pressed
     pasapaporInput.addEventListener("keydown", (e) => {
         if (!(e instanceof KeyboardEvent))
@@ -330,4 +330,6 @@ window.onload = () => {
     }, 500);
     pasapaporInput.focus();
     pasapaporInput.select();
-};
+}
+;
+addListeners();

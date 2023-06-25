@@ -250,7 +250,7 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 	}
 }
 
-window.onload = () => {
+function addListeners(){
 	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
 		if(!(e instanceof KeyboardEvent)) never();
@@ -308,3 +308,4 @@ window.onload = () => {
 	pasapaporInput.select();
 };
 
+addListeners();
