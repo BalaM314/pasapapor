@@ -32,16 +32,12 @@ p, ul, li, input {
 .lightTheme #pasapapor-select {
 	background-color: inset 0 0 1000px var(--light-theme-background);
 	color: var(--light-theme-text);
+	border: 2px inset ThreeDDarkShadow;
 }
 
 .darkTheme #pasapapor-select {
-	/* TODO is this redundant? */
 	color: var(--dark-theme-text);
 	background-color: var(--dark-theme-background);
-}
-
-.lightTheme #pasapapor-select {
-	border: 2px inset ThreeDDarkShadow;
 }
 
 #content {
