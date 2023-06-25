@@ -5,6 +5,7 @@ const levelSelectDiv = getElement("#level-select", HTMLDivElement);
 const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const errorbox = getElement("#errorbox", HTMLDivElement);
+const headerText = getElement("#header-text", HTMLSpanElement);
 
 enum Level {
 	IGCSE = "Cambridge IGCSE",
@@ -286,6 +287,14 @@ window.onload = () => {
 		case Level.IGCSE: buttonIgcse.click(); break;
 	}
 
+	let flashing = false;
+	headerText.addEventListener("click", e => {
+		if(e.shiftKey) flashing = !flashing;
+		else headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
+	});
+	setInterval(() => {
+		if(flashing) headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
+	}, 500);
 
 	pasapaporInput.focus();
 	pasapaporInput.select();
