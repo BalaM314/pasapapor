@@ -1,5 +1,5 @@
 "use strict";
-const content = getElement("div.content", HTMLDivElement);
+const content = getElement("div#content", HTMLDivElement);
 const toggleBtn = getElement("button.theme", HTMLButtonElement);
 const icon = getElement("span.material-icons", HTMLSpanElement);
 function enableDarkMode() {

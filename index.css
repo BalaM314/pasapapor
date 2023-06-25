@@ -1,8 +1,3 @@
-* {
-	padding: 0px;
-	margin: 0px;
-	box-sizing: border-box;
-}
 
 :root {
 	--light-theme-text: black;
@@ -13,56 +8,63 @@
 	--header-text: yellowgreen;
 }
 
-html, body {
-	height: 100%;
-}
-
 body {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	background-image: url("https://balam314.github.io/starfield.png");
 	background-color: black;
+	margin: 0;
 }
 
-div.content.lightTheme {
+p, ul, li, input {
+	margin: 0;
+	padding: 0;
+}
+
+.lightTheme {
 	background-color: var(--light-theme-background);
 	color: var(--light-theme-text);
 }
 
-div.content.darkTheme {
+.darkTheme {
 	background-color: var(--dark-theme-background);
 	color: var(--dark-theme-text);
 }
 
-div.content.lightTheme #pasapapor-select {
+.lightTheme #pasapapor-select {
 	background-color: inset 0 0 1000px var(--light-theme-background);
 	color: var(--light-theme-text);
 }
 
-div.content.darkTheme #pasapapor-select {
+.darkTheme #pasapapor-select {
+	/* TODO is this redundant? */
 	color: var(--dark-theme-text);
 	background-color: var(--dark-theme-background);
 }
 
-div.content.lightTheme #pasapapor-select {
+.lightTheme #pasapapor-select {
 	border: 2px inset ThreeDDarkShadow;
 }
 
-div.content {
+#content {
+	box-sizing: border-box;
+
 	width: 90vw;
 	min-width: 400px;
+	margin-left: 5vw;
+	margin-right: 5vw;
+	
 	min-height: 90vh;
-	padding: 2em 2em;
+	margin-top: 5vh;
+
+	padding: 2em min(2em, 5vw) 2em;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	font-family: sans-serif;
 	font-size: large;
-	border: ridge blue 4px;
+	border: ridge blue 6px;
 }
 
-div.content ul li {
+#content ul li {
 	padding: 0.3em 1em;
 }
 
@@ -72,7 +74,7 @@ div.content ul li {
 	font-size: large;
 	width: 40%;
 	min-width: 200px;
-	padding: 5px;
+	padding-left: 5px;
 }
 
 #level-select {
@@ -81,10 +83,11 @@ div.content ul li {
 	font-size: larger;
 }
 
-div.content footer {
+#content footer {
 	display: block;
 	margin-top: auto;
 }
+
 button.theme {
 	position: relative;
 	display: inline;
@@ -102,15 +105,15 @@ button.theme {
 	grid-column: 3;
 }
 
-div.lightTheme button:hover {
+.lightTheme button:hover {
 	box-shadow: 0 0 7px -1px grey;
 }
 
-div.darkTheme button:hover {
+.darkTheme button:hover {
 	box-shadow: 0 0 19px -1px gray;
 }
 
-div#errorbox {
+#errorbox {
 	color: var(--error-color);
 }
 
