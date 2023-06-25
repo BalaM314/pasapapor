@@ -6,6 +6,7 @@ const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const errorbox = getElement("#errorbox", HTMLDivElement);
 const headerText = getElement("#header-text", HTMLSpanElement);
+const header = getElement("#header", HTMLDivElement);
 
 enum Level {
 	IGCSE = "Cambridge IGCSE",
@@ -288,9 +289,16 @@ window.onload = () => {
 	}
 
 	let flashing = false;
+	let bouncing = false;
+	let flipped = false;
 	headerText.addEventListener("click", e => {
 		if(e.shiftKey) flashing = !flashing;
-		else headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
+		if(e.altKey) bouncing = !bouncing;
+		if(e.ctrlKey) flipped = !flipped;
+		header.style.setProperty("transform", flipped ? "scaleX(-1)" : "none");
+		headerText.style.setProperty("animation-name", bouncing ? "sizebounce" : "none");
+		//modifying animation-play-state didn't work as the animation could get paused when the size is high, causing scrollbars to appear
+		headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
 	});
 	setInterval(() => {
 		if(flashing) headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
