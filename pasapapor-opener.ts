@@ -106,15 +106,15 @@ function getSubjectMapping():SubjectMapping {
 	const subjectData = getSubjectData();
 	return Object.fromEntries([
 		...subjectData[0]
-		.map(([id, name]) => ([id, {
-			level: Level.IGCSE,
-			name
-		}])),
+			.map(([id, name]) => ([id, {
+				level: Level.IGCSE,
+				name
+			}])),
 		...subjectData[1]
-		.map(([id, name]) => ([id, {
-			level: Level.A_LEVELS,
-			name
-		}])),
+			.map(([id, name]) => ([id, {
+				level: Level.A_LEVELS,
+				name
+			}])),
 	]);
 }
 
@@ -275,6 +275,17 @@ window.onload = () => {
 			}
 		}
 	});
+
+	//When the selected level is changed
+	buttonAsa.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.A_LEVELS));
+	buttonIgcse.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.IGCSE));
+
+	//Load saved level
+	switch(localStorage.getItem("pasapapor-level")){
+		case Level.A_LEVELS: buttonAsa.click(); break;
+		case Level.IGCSE: buttonIgcse.click(); break;
+	}
+
 
 	pasapaporInput.focus();
 	pasapaporInput.select();
