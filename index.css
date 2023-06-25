@@ -45,14 +45,6 @@ div.content.darkTheme #pasapapor-select {
 	background-color: var(--dark-theme-background);
 }
 
-div.content.darkTheme a {
-	color: lightblue;
-}
-
-div.content.darkTheme a:visited {
-	color: #C000C0;
-}
-
 div.content.lightTheme #pasapapor-select {
 	border: 2px inset ThreeDDarkShadow;
 }
@@ -115,7 +107,7 @@ div.lightTheme button:hover {
 }
 
 div.darkTheme button:hover {
-	box-shadow: 0 0 19px -1px black;
+	box-shadow: 0 0 19px -1px gray;
 }
 
 div#errorbox {
@@ -123,7 +115,7 @@ div#errorbox {
 }
 
 button:active {
-	filter:brightness(0.8)
+	filter: brightness(0.8);
 }
 
 #header-text {
@@ -146,13 +138,13 @@ button:active {
 }
 
 a {
-	color: #00C400 !important;
+	color: #00C400;
 }
 a:hover {
-	color: #00EC00 !important;
+	color: #00EC00;
 }
 a:active {
-	color: #0F0 !important;
+	color: #0F0;
 }
 
 @keyframes sizebounce {
