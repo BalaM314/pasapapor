@@ -64,6 +64,7 @@ class Papor {
 const otherDocuments = (d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, { url() { return v; } }])))({
     mf19: "https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf",
     mf10: "https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf",
+    mf20: "https://www.cambridgeinternational.org/images/344616-list-of-formulae-and-statistical-tables.pdf",
 });
 function getSubjectData() {
     //JSON.stringify(Object.fromEntries(Array.from(temp0.children).map(el => [el.innerText.match(/\((\d+)\)/)?.[1], el.innerText]).filter(([id, text]) => id != undefined)));
