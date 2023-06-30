@@ -313,7 +313,10 @@ function addListeners() {
     let flashing = false;
     let bouncing = false;
     let flipped = false;
+    let clickTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     headerText.addEventListener("click", e => {
+        clickTimes.shift();
+        clickTimes.push(Date.now());
         if (e.shiftKey)
             flashing = !flashing;
         if (e.altKey)
@@ -325,6 +328,8 @@ function addListeners() {
         //modifying animation-play-state didn't work as the animation could get paused when the size is high, causing scrollbars to appear
         if (!e.shiftKey && !e.altKey && !e.ctrlKey)
             headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
+        if(((Date.now() - clickTimes[0]) / 10) < 500)
+			header.style.setProperty("visibility", "hidden");
     });
     setInterval(() => {
         if (flashing)
