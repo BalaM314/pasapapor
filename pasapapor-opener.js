@@ -323,7 +323,8 @@ function addListeners() {
         header.style.setProperty("transform", flipped ? "scaleX(-1)" : "none");
         headerText.style.setProperty("animation-name", bouncing ? "sizebounce" : "none");
         //modifying animation-play-state didn't work as the animation could get paused when the size is high, causing scrollbars to appear
-        headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
+        if (!e.shiftKey && !e.altKey && !e.ctrlKey)
+            headerText.style.setProperty('color', `hsl(${Math.floor(Math.random() * 360)}, 80%, 80%)`);
     });
     setInterval(() => {
         if (flashing)
