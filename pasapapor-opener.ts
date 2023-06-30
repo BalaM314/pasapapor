@@ -80,9 +80,10 @@ class Papor implements Openable {
 
 const otherDocuments: {
 	[index:string]: Openable
-} = (d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, {url(){return v;}}])))({
+} = (d => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, {url: () => v}])))({
 	mf19: "https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf",
 	mf10: "https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf",
+	mf20: "https://www.cambridgeinternational.org/images/344616-list-of-formulae-and-statistical-tables.pdf",
 });
 
 function getSubjectData():[igcse:[id:string, name:string][], alevels:[id:string, name:string][]] {
