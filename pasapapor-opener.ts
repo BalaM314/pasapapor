@@ -1,3 +1,7 @@
+/**
+ * Copyright © BalaM314, 2023. MIT License.
+ */
+
 
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
