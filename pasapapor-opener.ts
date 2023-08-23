@@ -21,9 +21,8 @@ enum Level {
 const otherDocuments: {
 	[index:string]: Openable
 } = (d => Object.fromEntries(
-	d.map(([url, name]) =>
-		(Array.isArray(name) ? name : [name])
-			.map(name => [name, {url: () => url}])
+	d.map(([url, ...names]) =>
+		names.map(name => [name, {url: () => url}])
 	).flat(1)
 ))([
 	["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9"],
