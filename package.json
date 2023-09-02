@@ -1,5 +1,16 @@
 {
-	"devDependencies": {
-		"@total-typescript/ts-reset": "^0.4.2"
-	}
+  "name": "pasapapor",
+  "version": "1.0.0",
+  "description": "open the past paper and marking scheme with one click",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "BalaM314",
+  "license": "MIT",
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.5.1"
+  }
 }
