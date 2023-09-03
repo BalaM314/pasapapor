@@ -149,7 +149,7 @@ function guessData(name, level) {
 }
 /** Validates a season, correcting it if it is "f22" or "w9". */
 function validateSeason(season) {
-    const matchData = season.match(/([a-z])(\d{1,2})/i);
+    const matchData = season.match(/^([a-z])(\d{1,4})$/i);
     if (matchData == null)
         return null;
     let [, seasonChar, year] = matchData;
@@ -157,6 +157,9 @@ function validateSeason(season) {
     let processedYear;
     if (parseInt(year) <= 9) {
         processedYear = "0" + year.slice(-1);
+    }
+    else if (year.length == 4) {
+        processedYear = year.slice(2);
     }
     else {
         processedYear = year;
