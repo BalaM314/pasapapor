@@ -144,6 +144,22 @@ function getElement<T extends typeof Element>(selector:string, type:T):T["protot
 	else throw new Error(`No elements matched selector ${selector}`);
 }
 
+/**
+ * Helper function to display a popup on first use of a feature. Do not overuse as getting spammed with alert() is annoying.
+ * @param key Gets "pasapapor-" prepended to it.
+ * @param message Message displayed in the alert box.
+ * @param callback Called if it is not the first use.
+ */
+function firstUsePopup(key:string, message:string, callback?:() => unknown, runCallbackAfterMessage = false){
+	const lsKey = `einsteinium-${key}`;
+	if(localStorage.getItem(lsKey) != null){
+		callback?.();
+	} else {
+		alert(message);
+		localStorage.setItem(lsKey, "true");
+		if(runCallbackAfterMessage) callback?.();
+	}
+}
 
 /** Guesses a subject based on input. */
 function guessData(name:string, level:Level | null):[string, SubjectData][] {
@@ -279,7 +295,7 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		return [new Papor(subjectID, season, type, code)];
 	}
 }
-
+navigator.userAgent
 function addListeners(){
 	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
@@ -299,7 +315,11 @@ function addListeners(){
 					default:
 						const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
 						if(urls.length == 1) window.open(urls[0], "_blank");
-						else urls.forEach(url => window.open(url, "_blank"));
+						else {
+							firstUsePopup("allow-popups", `You're trying to open multiple papers at once, but browsers will block this by default to prevent spam.\nInstructions to allow popups: Check the URL bar (left side or right side) for an icon or message that says "Popup blocked", then click it and select "Always allow popups and redirects from..."`, () => {
+								urls.forEach(url => window.open(url, "_blank"));
+							}, true);
+						}
 				}
 				errorbox.innerText = "";
 			} catch(err){

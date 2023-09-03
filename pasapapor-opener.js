@@ -123,6 +123,24 @@ function getElement(selector, type) {
     else
         throw new Error(`No elements matched selector ${selector}`);
 }
+/**
+ * Helper function to display a popup on first use of a feature. Do not overuse as getting spammed with alert() is annoying.
+ * @param key Gets "pasapapor-" prepended to it.
+ * @param message Message displayed in the alert box.
+ * @param callback Called if it is not the first use.
+ */
+function firstUsePopup(key, message, callback, runCallbackAfterMessage = false) {
+    const lsKey = `einsteinium-${key}`;
+    if (localStorage.getItem(lsKey) != null) {
+        callback === null || callback === void 0 ? void 0 : callback();
+    }
+    else {
+        alert(message);
+        localStorage.setItem(lsKey, "true");
+        if (runCallbackAfterMessage)
+            callback === null || callback === void 0 ? void 0 : callback();
+    }
+}
 /** Guesses a subject based on input. */
 function guessData(name, level) {
     return Object.entries(subjectMapping)
@@ -283,6 +301,7 @@ function getPaporFromInput(input, level) {
         return [new Papor(subjectID, season, type, code)];
     }
 }
+navigator.userAgent;
 function addListeners() {
     //When a key is pressed
     pasapaporInput.addEventListener("keydown", (e) => {
@@ -316,8 +335,11 @@ function addListeners() {
                             const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
                             if (urls.length == 1)
                                 window.open(urls[0], "_blank");
-                            else
-                                urls.forEach(url => window.open(url, "_blank"));
+                            else {
+                                firstUsePopup("allow-popups", `You're trying to open multiple papers at once, but browsers will block this by default to prevent spam.\nInstructions to allow popups: Check the URL bar (left side or right side) for an icon or message that says "Popup blocked", then click it and select "Always allow popups and redirects from..."`, () => {
+                                    urls.forEach(url => window.open(url, "_blank"));
+                                }, true);
+                            }
                     }
                 errorbox.innerText = "";
             }
