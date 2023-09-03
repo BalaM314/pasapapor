@@ -173,13 +173,13 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 
 /** Validates a season, correcting it if it is "f22" or "w9". */
 function validateSeason(season:string):string | null {
-	const matchData = season.match(/^([a-z])(\d{1,4})$/i);
+	const matchData = season.match(/^([a-z])(\d{1}|\d{2}|\d{4})$/i);
 	if(matchData == null) return null;
 	let [, seasonChar, year] = matchData;
 	let processedSeason:string;
 	let processedYear:string;
-	if(parseInt(year) <= 9){
-		processedYear = "0" + year.slice(-1);
+	if(year.length == 1){
+		processedYear = "0" + year;
 	} else if(year.length == 4){
 		processedYear = year.slice(2);
 	} else {
@@ -253,11 +253,11 @@ function never():never {throw new Error("code failed");}
 function getPaporFromInput(input:string, level:Level | null):Openable[] {
 	let lowercaseInput = input.toLowerCase();
 	if(otherDocuments[lowercaseInput]) return [otherDocuments[lowercaseInput]];
-	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(ci|er|ms|qp|in|sf|ir|pm)[ \-_\/]*?(\d\d)[ \-_\/]*$/);
-	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(\d\d)[ \-_\/]*$/);
-	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*([wsmjfon](?:20[012]\d|[012]?\d))[ \-_\/]*(gt|er)[ \-_\/]*$/);
-	const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*$/);
-	const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d\d\d\d|[a-zA-Z ()0-9]+?)[ \-_\/]*(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
+	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\w{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
+	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
+	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(gt|er)[ \-_\/]*$/);
+	const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*$/);
+	const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		[, subjectID, season, type, code] = regularMatchData;
