@@ -151,7 +151,7 @@ function getElement<T extends typeof Element>(selector:string, type:T):T["protot
  * @param callback Called if it is not the first use.
  */
 function firstUsePopup(key:string, message:string, callback?:() => unknown, runCallbackAfterMessage = false){
-	const lsKey = `einsteinium-${key}`;
+	const lsKey = `pasapapor-${key}`;
 	if(localStorage.getItem(lsKey) != null){
 		callback?.();
 	} else {

@@ -130,7 +130,7 @@ function getElement(selector, type) {
  * @param callback Called if it is not the first use.
  */
 function firstUsePopup(key, message, callback, runCallbackAfterMessage = false) {
-    const lsKey = `einsteinium-${key}`;
+    const lsKey = `pasapapor-${key}`;
     if (localStorage.getItem(lsKey) != null) {
         callback === null || callback === void 0 ? void 0 : callback();
     }
