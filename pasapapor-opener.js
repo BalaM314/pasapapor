@@ -337,6 +337,24 @@ function smartParseInput(input, level) {
         [, componentType] = componentTypeMatch;
         input = input.replace(componentTypeMatch[0], "@");
     }
+    //Search for expanded component type
+    if (componentType == null) {
+        const expandedComponentTypeMatch = input.match(/(confidential[ \-_\/]*?instructions)|(examiner[ \-_\/]*?report)|(grade[ \-_\/]*?thresholds)|(marking[ \-_\/]*?scheme)|(question[ \-_\/]*?paper)|(insert)|(source[ \-_\/]*?files?)|(information[ \-_\/]*?report)|(pre[ \-_\/]*?release[ \-_\/]*?materials)/);
+        if (expandedComponentTypeMatch) {
+            const [, ci, er, gt, ms, qp, _in, sf, ir, pm] = expandedComponentTypeMatch;
+            componentType =
+                ci ? "ci" :
+                    er ? "er" :
+                        gt ? "gt" :
+                            ms ? "ms" :
+                                qp ? "qp" :
+                                    _in ? "in" :
+                                        sf ? "sf" :
+                                            ir ? "ir" :
+                                                pm ? "pm" : never();
+            input = input.replace(expandedComponentTypeMatch[0], "@");
+        }
+    }
     //Search for subject code
     const subjectCodeMatch = input.match(/([0789]\d\d\d)/);
     if (subjectCodeMatch) {
