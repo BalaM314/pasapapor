@@ -88,6 +88,14 @@ class Papor {
     toString() {
         return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
     }
+    cleanString() {
+        if (this.code) {
+            return `${this.subjectID}_${this.season}_${this.type}_${this.code}`;
+        }
+        else {
+            return `${this.subjectID}_${this.season}_${this.type}`;
+        }
+    }
 }
 function getSyllabusLink(code, specifier) {
     if (!(code in syllabusData))
@@ -408,7 +416,7 @@ function smartParseInput(input, level) {
         //TODO handle stuff like further___math
         //TODO duped code here
         for (const str of remainingStrings) {
-            if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim()))
+            if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
                 continue;
             try {
                 console.log(`Checking <<${str.trim()}>>`);
@@ -425,7 +433,7 @@ function smartParseInput(input, level) {
             //Try a different match
             remainingStrings = (_b = input.match(/[a-z]+/g)) !== null && _b !== void 0 ? _b : [];
             for (const str of remainingStrings) {
-                if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim()))
+                if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
                     continue;
                 try {
                     console.log(`Checking <<${str.trim()}>>`);
@@ -470,7 +478,7 @@ function smartParseInput(input, level) {
         }
         const link = getSyllabusLink(subjectCode, syllabusRawYearSpecifier);
         console.log(`Chunks matched pattern: syllabus`);
-        return [{ url: () => link }];
+        return [{ url: () => link, cleanString: () => `${subjectCode} syllabus` }];
     }
     else {
         //Try to guess what the user was trying to do
@@ -546,7 +554,7 @@ function getPaporFromInput(input, level) {
         let [, subjectID, specifier] = syllabusMatchData;
         if (isNaN(parseInt(subjectID)))
             subjectID = getIDFromName(subjectID, level);
-        return [{ url: () => getSyllabusLink(subjectID, specifier) }];
+        return [{ url: () => getSyllabusLink(subjectID, specifier), cleanString: () => `${subjectID} syllabus` }];
     }
     else {
         console.log(`Input did not match any known patterns, triggering smart parser...`);
@@ -569,7 +577,6 @@ function getPaporFromInput(input, level) {
         return [new Papor(subjectID, season, type, code)];
     }
 }
-navigator.userAgent;
 function addListeners() {
     //When a key is pressed
     pasapaporInput.addEventListener("keydown", (e) => {
@@ -578,6 +585,8 @@ function addListeners() {
         if (e.key == "Enter") {
             //If it's enter, open papors
             try {
+                errorbox.style.color = "#8F8";
+                errorbox.innerText = "";
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
                 else if (/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
@@ -600,19 +609,21 @@ function addListeners() {
                             pasapaporInput.value = "";
                             break;
                         default:
-                            const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
-                            if (urls.length == 1)
-                                window.open(urls[0], "_blank");
+                            const papors = getPaporFromInput(pasapaporInput.value, getSelectedLevel());
+                            if (papors.length == 1)
+                                window.open(papors[0].url(), "_blank");
                             else {
                                 firstUsePopup("allow-popups", `You're trying to open multiple papers at once, but browsers will block this by default to prevent spam.\nInstructions to allow popups: Check the URL bar (left side or right side) for an icon or message that says "Popup blocked", then click it and select "Always allow popups and redirects from..."`, () => {
-                                    urls.forEach(url => window.open(url, "_blank"));
+                                    papors.forEach(papor => window.open(papor.url(), "_blank"));
                                 }, true);
                             }
+                            errorbox.innerText = `✔ Opened: ${papors.map(papor => papor.cleanString()).join(", ")}`;
+                            break;
                     }
-                errorbox.innerText = "";
             }
             catch (err) {
-                errorbox.innerText = `Error: ${err.message}`;
+                errorbox.style.color = "#F88";
+                errorbox.innerText = `❗ ${err.message}`;
             }
         }
     });

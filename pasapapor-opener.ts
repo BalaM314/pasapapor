@@ -92,7 +92,8 @@ const shorthandSubjectNames = ((data:{
 });
 
 interface Openable {
-	url: () => string;
+	url(): string;
+	cleanString(): string;
 }
 
 /** Represents a pasapapor. */
@@ -114,6 +115,13 @@ class Papor implements Openable {
 	}
 	toString(){
 		return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;
+	}
+	cleanString(){
+		if(this.code){
+			return `${this.subjectID}_${this.season}_${this.type}_${this.code}`;
+		} else {
+			return `${this.subjectID}_${this.season}_${this.type}`;
+		}
 	}
 }
 
@@ -395,7 +403,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		//TODO handle stuff like further___math
 		//TODO duped code here
 		for(const str of remainingStrings){
-			if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim())) continue;
+			if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
 			try {
 				console.log(`Checking <<${str.trim()}>>`);
 				subjectCode = getIDFromName(str.trim(), level);
@@ -410,7 +418,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 			//Try a different match
 			remainingStrings = input.match(/[a-z]+/g) ?? [];
 			for(const str of remainingStrings){
-				if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim())) continue;
+				if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
 				try {
 					console.log(`Checking <<${str.trim()}>>`);
 					subjectCode = getIDFromName(str.trim(), level);
@@ -451,7 +459,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		}
 		const link = getSyllabusLink(subjectCode, syllabusRawYearSpecifier);
 		console.log(`Chunks matched pattern: syllabus`);
-		return [{url: () => link}];
+		return [{url: () => link, cleanString: () => `${subjectCode} syllabus`}];
 	} else {
 		//Try to guess what the user was trying to do
 		//Syllabus requires a very minimal amount of info (subject and a phrase implying syllabus, such as "s" or "syl"), so do that last
@@ -521,7 +529,7 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		console.log(`Input matched pattern: syllabus`);
 		let [, subjectID, specifier] = syllabusMatchData;
 		if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
-		return [{url: () => getSyllabusLink(subjectID, specifier)}];
+		return [{url: () => getSyllabusLink(subjectID, specifier), cleanString: () => `${subjectID} syllabus`}];
 	} else {
 		console.log(`Input did not match any known patterns, triggering smart parser...`);
 		return smartParseInput(input, level);
@@ -540,7 +548,7 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		return [new Papor(subjectID, season, type, code)];
 	}
 }
-navigator.userAgent
+
 function addListeners(){
 	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
@@ -548,6 +556,8 @@ function addListeners(){
 		if(e.key == "Enter"){
 			//If it's enter, open papors
 			try {
+				errorbox.style.color = "#8F8";
+				errorbox.innerText = "";
 				if(pasapaporInput.value.includes("amogus"))
 					throw new Error("Too sus.");
 				else if(/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
@@ -558,17 +568,19 @@ function addListeners(){
 					case "ig": case "i": case "igcse":
 						buttonIgcse.click(); pasapaporInput.value = ""; break;
 					default:
-						const urls = getPaporFromInput(pasapaporInput.value, getSelectedLevel()).map(papor => papor.url());
-						if(urls.length == 1) window.open(urls[0], "_blank");
+						const papors = getPaporFromInput(pasapaporInput.value, getSelectedLevel());
+						if(papors.length == 1) window.open(papors[0].url(), "_blank");
 						else {
 							firstUsePopup("allow-popups", `You're trying to open multiple papers at once, but browsers will block this by default to prevent spam.\nInstructions to allow popups: Check the URL bar (left side or right side) for an icon or message that says "Popup blocked", then click it and select "Always allow popups and redirects from..."`, () => {
-								urls.forEach(url => window.open(url, "_blank"));
+								papors.forEach(papor => window.open(papor.url(), "_blank"));
 							}, true);
 						}
+						errorbox.innerText = `✔ Opened: ${papors.map(papor => papor.cleanString()).join(", ")}`;
+						break;
 				}
-				errorbox.innerText = "";
 			} catch(err){
-				errorbox.innerText = `Error: ${(err as Error).message}`;
+				errorbox.style.color = "#F88";
+				errorbox.innerText = `❗ ${(err as Error).message}`;
 			}
 		}
 	});
