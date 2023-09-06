@@ -554,6 +554,9 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 }
 
 function addListeners(){
+	const firstLoad = localStorage.getItem("pasapapor-first-load") === null;
+	localStorage.setItem("pasapapor-first-load", "false");
+
 	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
 		if(!(e instanceof KeyboardEvent)) never();
@@ -623,6 +626,14 @@ function addListeners(){
 
 	pasapaporInput.focus();
 	pasapaporInput.select();
+
+	Array.from(document.getElementsByClassName("hide-first-load")).forEach(el => {
+		if(firstLoad)
+			el.addEventListener("click", () => {
+				el.classList.remove("hide-first-load");
+			});
+		else el.classList.remove("hide-first-load");
+	});
 };
 
 addListeners();
