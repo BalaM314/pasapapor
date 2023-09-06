@@ -260,9 +260,10 @@ function smartParseInput(input, level) {
     if (cleanedInput in otherDocuments)
         return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
+    //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
     findSeason: {
-        const x00Match = input.match(/(f|m|s|j|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+        const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
         //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
         //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
         //Negative lookahead used to match s209701 but not s9702
@@ -270,14 +271,27 @@ function smartParseInput(input, level) {
             const [, _seasonChar, _year] = x00Match;
             switch (_seasonChar) {
                 //Try to set the season, but if it's incorrect cancel
+                case "spring":
+                case "feb":
+                case "march":
+                case "mar":
                 case "m":
                 case "f":
                     seasonChar = "m";
                     break;
+                case "summer":
+                case "may":
+                case "june":
+                case "jun":
                 case "j":
                 case "s":
                     seasonChar = "s";
                     break;
+                case "winter":
+                case "october":
+                case "november":
+                case "oct":
+                case "nov":
                 case "w":
                 case "o":
                 case "n":
@@ -319,8 +333,8 @@ function smartParseInput(input, level) {
         [, componentType] = componentTypeMatch;
         input = input.replace(componentTypeMatch[0], "@");
     }
-    //Search for syllabus code
-    const subjectCodeMatch = input.match(/(?<![a-z])([0789]\d\d\d)(?![a-z])/);
+    //Search for subject code
+    const subjectCodeMatch = input.match(/([0789]\d\d\d)/);
     if (subjectCodeMatch) {
         [, subjectCode] = subjectCodeMatch;
         input = input.replace(subjectCodeMatch[0], "@");
