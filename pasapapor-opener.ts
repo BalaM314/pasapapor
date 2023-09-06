@@ -388,13 +388,14 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	}
 
 	let remainingStrings;
-	let subjectErrorMessages = new Set<string>;
+	let subjectErrorMessages = new Set<string>; //very cursed but it works
 	if(subjectCode == null){
 		console.log(`Parsing remaining input to find subject code <<${input}>>`);
 		remainingStrings = input.match(/[a-z ]*[a-z][a-z ]*/g) ?? []; //this regex is probably O(n^2) or worse
 		//TODO handle stuff like further___math
+		//TODO duped code here
 		for(const str of remainingStrings){
-			if(str.trim() == "") continue;
+			if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim())) continue;
 			try {
 				console.log(`Checking <<${str.trim()}>>`);
 				subjectCode = getIDFromName(str.trim(), level);
@@ -409,7 +410,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 			//Try a different match
 			remainingStrings = input.match(/[a-z]+/g) ?? [];
 			for(const str of remainingStrings){
-				if(str.trim() == "") continue;
+				if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim())) continue;
 				try {
 					console.log(`Checking <<${str.trim()}>>`);
 					subjectCode = getIDFromName(str.trim(), level);

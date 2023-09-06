@@ -401,13 +401,14 @@ function smartParseInput(input, level) {
             console.log(`Unable to find season with looser search`);
     }
     let remainingStrings;
-    let subjectErrorMessages = new Set;
+    let subjectErrorMessages = new Set; //very cursed but it works
     if (subjectCode == null) {
         console.log(`Parsing remaining input to find subject code <<${input}>>`);
         remainingStrings = (_a = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _a !== void 0 ? _a : []; //this regex is probably O(n^2) or worse
         //TODO handle stuff like further___math
+        //TODO duped code here
         for (const str of remainingStrings) {
-            if (str.trim() == "")
+            if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim()))
                 continue;
             try {
                 console.log(`Checking <<${str.trim()}>>`);
@@ -424,7 +425,7 @@ function smartParseInput(input, level) {
             //Try a different match
             remainingStrings = (_b = input.match(/[a-z]+/g)) !== null && _b !== void 0 ? _b : [];
             for (const str of remainingStrings) {
-                if (str.trim() == "")
+                if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us"].includes(str.trim()))
                     continue;
                 try {
                     console.log(`Checking <<${str.trim()}>>`);
