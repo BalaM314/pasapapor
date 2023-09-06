@@ -22,7 +22,7 @@ const otherDocuments: {
 	[index:string]: Openable
 } = (d => Object.fromEntries(
 	d.map(([url, ...names]) =>
-		names.map(name => [name, {url: () => url}])
+		names.map(name => [name, {url: () => url, cleanString: () => name}] as const)
 	).flat(1)
 ))([
 	["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
