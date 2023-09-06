@@ -239,6 +239,35 @@ function isTypeValid(subjectID, type, code) {
         default: return true;
     }
 }
+function resolveSeasonChar(seasonString) {
+    switch (seasonString) {
+        //Try to set the season, but if it's incorrect cancel
+        case "spring":
+        case "feb":
+        case "march":
+        case "mar":
+        case "m":
+        case "f":
+            return "m";
+        case "summer":
+        case "may":
+        case "june":
+        case "jun":
+        case "j":
+        case "s":
+            return "s";
+        case "winter":
+        case "october":
+        case "november":
+        case "oct":
+        case "nov":
+        case "w":
+        case "o":
+        case "n":
+            return "w";
+        default: return null;
+    }
+}
 function never() { throw new Error("code failed"); }
 function smartParseInput(input, level) {
     //List of things that the input could mean:
@@ -263,42 +292,17 @@ function smartParseInput(input, level) {
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
     findSeason: {
-        const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+        const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)[ \-_\/]*(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
         //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
         //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
         //Negative lookahead used to match s209701 but not s9702
         if (x00Match) {
-            const [, _seasonChar, _year] = x00Match;
-            switch (_seasonChar) {
-                //Try to set the season, but if it's incorrect cancel
-                case "spring":
-                case "feb":
-                case "march":
-                case "mar":
-                case "m":
-                case "f":
-                    seasonChar = "m";
-                    break;
-                case "summer":
-                case "may":
-                case "june":
-                case "jun":
-                case "j":
-                case "s":
-                    seasonChar = "s";
-                    break;
-                case "winter":
-                case "october":
-                case "november":
-                case "oct":
-                case "nov":
-                case "w":
-                case "o":
-                case "n":
-                    seasonChar = "w";
-                    break;
-                default: break findSeason; //jump labels ftw
-            }
+            const [, _season, _year] = x00Match;
+            const char = resolveSeasonChar(_season);
+            if (char)
+                seasonChar = char;
+            else
+                break findSeason; //jump labels ftw
             //Set the year
             if (_year.length == 1)
                 year = "0" + _year; //9 -> 09
@@ -339,10 +343,25 @@ function smartParseInput(input, level) {
         [, subjectCode] = subjectCodeMatch;
         input = input.replace(subjectCodeMatch[0], "@");
     }
+    //If season is unknown, try again with looser search, and after sections of the input have been removed
+    if (seasonChar == null || year == null) {
+        const yearMatch = input.match(/20(\d\d)/);
+        if (yearMatch)
+            year = yearMatch[1];
+        //Either any of the words, or any of the characters that do not have letters immediately before or after (that means we matched a random letter in a longer word)
+        const unboundedSeasonMatch = input.match(/(spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)|((?<![a-z])[fmsjwon](?![a-z]))/);
+        if (unboundedSeasonMatch) {
+            const char = resolveSeasonChar(unboundedSeasonMatch[0]);
+            if (char == null)
+                never();
+            seasonChar = char;
+        }
+    }
     let remainingStrings;
     if (subjectCode == null) {
         //Try to get the subject name
         remainingStrings = (_a = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _a !== void 0 ? _a : []; //this regex is probably O(n^2) or worse
+        //TODO handle stuff like further___math
         for (const str of remainingStrings) {
             try {
                 subjectCode = getIDFromName(str, level);
