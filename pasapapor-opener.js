@@ -286,8 +286,10 @@ function smartParseInput(input, level) {
     input = input.toLowerCase();
     //Check for documents
     const cleanedInput = input.replace(/[ \-_\/]/g, "");
-    if (cleanedInput in otherDocuments)
+    if (cleanedInput in otherDocuments) {
+        console.log(`Input matched otherdocument`);
         return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
+    }
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
@@ -313,7 +315,10 @@ function smartParseInput(input, level) {
             else
                 never();
             input = input.replace(x00Match[0], "@");
+            console.log(`Found season and year: "${x00Match[0]}"`);
         }
+        else
+            console.log(`Unable to find season and year`);
     }
     //Search for syllabus
     const syllabusMatch = input.match(/(?<![a-z])(s|syl|syll|syllabus)(?![a-z])/); //\b does not work because it thinks _ is a word
@@ -324,21 +329,28 @@ function smartParseInput(input, level) {
         const rawYearSpecifierMatch = input.match(/(?<=[ \-_\/]|^)(\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)(?=[ \-_\/]|$)/);
         if (rawYearSpecifierMatch)
             [, syllabusRawYearSpecifier] = rawYearSpecifierMatch;
+        console.log(`Syllabus: specified: "${syllabusMatch[0]}"`);
     }
+    else
+        console.log(`Syllabus: not specified`);
     //Search for component code
     const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
     if (componentCodeMatch) {
         [, componentCode] = componentCodeMatch;
         input = input.replace(componentCodeMatch[0], "@");
+        console.log(`Found component code: "${componentCodeMatch[0]}"`);
     }
+    else
+        console.log(`Unable to find component code`);
     //Search for component type
     const componentTypeMatch = input.match(/(?<![a-z])(ci|er|gt|ms|qp|in|sf|ir|pm)(?![a-z])/);
     if (componentTypeMatch) {
         [, componentType] = componentTypeMatch;
         input = input.replace(componentTypeMatch[0], "@");
+        console.log(`Found component type: "${componentTypeMatch[0]}"`);
     }
-    //Search for expanded component type
-    if (componentType == null) {
+    else {
+        //Search for expanded component type
         const expandedComponentTypeMatch = input.match(/(confidential[ \-_\/]*?instructions?)|(examiner[ \-_\/]*?report)|(grade[ \-_\/]*?thresholds)|(marking[ \-_\/]*?scheme)|(question[ \-_\/]*?paper)|(insert)|(source[ \-_\/]*?files?)|(information[ \-_\/]*?report)|(pre[ \-_\/]*?release[ \-_\/]*?materials)/);
         if (expandedComponentTypeMatch) {
             const [, ci, er, gt, ms, qp, _in, sf, ir, pm] = expandedComponentTypeMatch;
@@ -353,46 +365,64 @@ function smartParseInput(input, level) {
                                             ir ? "ir" :
                                                 pm ? "pm" : never();
             input = input.replace(expandedComponentTypeMatch[0], "@");
+            console.log(`Found expanded component type: "${expandedComponentTypeMatch[0]}"`);
         }
+        else
+            console.log(`Unable to find component type`);
     }
     //Search for subject code
     const subjectCodeMatch = input.match(/([0789]\d\d\d)/);
     if (subjectCodeMatch) {
         [, subjectCode] = subjectCodeMatch;
         input = input.replace(subjectCodeMatch[0], "@");
+        console.log(`Found subject code: "${subjectCodeMatch[0]}"`);
     }
+    else
+        console.log(`Unable to find subject code`);
     //If season is unknown, try again with looser search, and after sections of the input have been removed
     if (seasonChar == null || year == null) {
         const yearMatch = input.match(/20(\d\d)/);
-        if (yearMatch)
+        if (yearMatch) {
             year = yearMatch[1];
+            console.log(`Found year with looser search: "${yearMatch[0]}"`);
+        }
+        else
+            console.log(`Unable to find year with looser search`);
         //Either any of the words, or any of the characters that do not have letters immediately before or after (that means we matched a random letter in a longer word)
-        const unboundedSeasonMatch = input.match(/(spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)|((?<![a-z])[fmsjwon](?![a-z]))/);
-        if (unboundedSeasonMatch) {
-            const char = resolveSeasonChar(unboundedSeasonMatch[0]);
+        const seasonMatch = input.match(/(spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)|((?<![a-z])[fmsjwon](?![a-z]))/);
+        if (seasonMatch) {
+            const char = resolveSeasonChar(seasonMatch[0]);
             if (char == null)
                 never();
             seasonChar = char;
+            console.log(`Found season with looser search: "${seasonMatch[0]}"`);
         }
+        else
+            console.log(`Unable to find season with looser search`);
     }
     let remainingStrings;
     if (subjectCode == null) {
-        //Try to get the subject name
+        console.log(`Parsing remaining input to find subject code <<${input}>>`);
         remainingStrings = (_a = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _a !== void 0 ? _a : []; //this regex is probably O(n^2) or worse
         //TODO handle stuff like further___math
         for (const str of remainingStrings) {
             try {
+                console.log(`Checking <<${str}>>`);
                 subjectCode = getIDFromName(str, level);
+                console.log(`Found subject code ${subjectCode}`);
                 break;
             }
             catch (err) { }
         }
+        console.log(`Parsing remaining input again but with different splitting logic`);
         if (subjectCode == null) {
             //Try a different match
             remainingStrings = (_b = input.match(/[a-z]+/g)) !== null && _b !== void 0 ? _b : [];
             for (const str of remainingStrings) {
                 try {
+                    console.log(`Checking <<${str}>>`);
                     subjectCode = getIDFromName(str, level);
+                    console.log(`Found subject code ${subjectCode}`);
                     break;
                 }
                 catch (err) {
@@ -401,22 +431,26 @@ function smartParseInput(input, level) {
             }
         }
     }
-    /*console.log(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
+    console.log(`Parsed information: `, {
         syllabus, year, seasonChar, subjectID: subjectCode, componentCode, componentType,
         remainingInput: input, remainingStrings
-    });*/
+    });
+    console.log(`Attempting to find a type to open`);
     if (subjectCode != null && seasonChar != null && year != null && componentType != null && componentCode != null) {
         if (componentType && !isTypeValid(subjectCode, componentType, componentCode))
             throw new Error(`Type ${componentType} is not a valid type for component ${subjectCode}/${componentCode}`);
+        console.log(`Chunks matched pattern: regular`);
         return [new Papor(subjectCode, `${seasonChar}${year}`, componentType, componentCode)];
     }
     else if (subjectCode != null && seasonChar != null && year != null && componentType == null && componentCode != null) {
+        console.log(`Chunks matched pattern: typeOmitted`);
         return [
             new Papor(subjectCode, `${seasonChar}${year}`, "qp", componentCode),
             new Papor(subjectCode, `${seasonChar}${year}`, "ms", componentCode),
         ];
     }
     else if (subjectCode != null && seasonChar != null && year != null && (componentType == "er" || componentType == "gt") && componentCode == null) {
+        console.log(`Chunks matched pattern: codeOmitted`);
         return [new Papor(subjectCode, `${seasonChar}${year}`, componentType)];
     }
     else if (syllabus == true && subjectCode != null) {
@@ -427,11 +461,13 @@ function smartParseInput(input, level) {
                 [, syllabusRawYearSpecifier] = rawYearSpecifierMatch;
         }
         const link = getSyllabusLink(subjectCode, syllabusRawYearSpecifier);
+        console.log(`Chunks matched pattern: syllabus`);
         return [{ url: () => link }];
     }
     else {
         //Try to guess what the user was trying to do
         //Syllabus requires a very minimal amount of info (subject and a phrase implying syllabus, such as "s" or "syl"), so do that last
+        console.log(`Chunks did not match any pattern, erroring`);
         if (subjectCode != null && componentType != null && componentCode != null) { //missing season
             throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${componentType} ${componentCode}). If you are, please specify the year and season, like this: (${subjectCode} s22 ${componentType} ${componentCode})`);
         }
@@ -445,16 +481,18 @@ function smartParseInput(input, level) {
             throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a syllabus, please specify the subject.");
         }
         else {
-            throw new Error("Pasapapor couldn't figure out what you're trying to open.");
+            throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a paper, enter the information in the form (subject) (season) (type) (code), like this: math s21 qp 43");
         }
     }
 }
 function getPaporFromInput(input, level) {
     var _a;
-    smartParseInput(input, level);
+    console.log(`Parsing input: <<${input}>>`);
     let lowercaseInput = input.toLowerCase();
-    if (otherDocuments[lowercaseInput])
+    if (otherDocuments[lowercaseInput]) {
+        console.log(`Input matched pattern: otherdocument`);
         return [otherDocuments[lowercaseInput]];
+    }
     const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\w{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
     const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
     const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(gt|er)[ \-_\/]*$/);
@@ -462,15 +500,19 @@ function getPaporFromInput(input, level) {
     const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
     let subjectID, season, type, code;
     if (regularMatchData != null) {
+        console.log(`Input matched pattern: regular`);
         [, subjectID, season, type, code] = regularMatchData;
     }
     else if (typeOmittedMatchData != null) {
+        console.log(`Input matched pattern: typeOmitted`);
         [, subjectID, season, code] = typeOmittedMatchData;
     }
     else if (codelessMatchData != null) {
+        console.log(`Input matched pattern: codeless`);
         [, subjectID, season, type] = codelessMatchData;
     }
     else if (alternateMatchData != null) {
+        console.log(`Input matched pattern: alternate`);
         let m, s, w, year;
         [, subjectID, code, m, s, w, year] = alternateMatchData;
         if (m) {
@@ -487,12 +529,14 @@ function getPaporFromInput(input, level) {
         }
     }
     else if (syllabusMatchData != null) {
+        console.log(`Input matched pattern: syllabus`);
         let [, subjectID, specifier] = syllabusMatchData;
         if (isNaN(parseInt(subjectID)))
             subjectID = getIDFromName(subjectID, level);
         return [{ url: () => getSyllabusLink(subjectID, specifier) }];
     }
     else {
+        console.log(`Input did not match any known patterns, erroring`);
         throw new Error("Improperly formatted input. Enter the information in the form (subject) (season) (type) (code), like this: math s21 qp 43");
     }
     season = (_a = validateSeason(season)) !== null && _a !== void 0 ? _a : (() => { throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`); })();
