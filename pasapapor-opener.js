@@ -170,8 +170,6 @@ function validateSeason(season) {
             processedSeason = "m";
             break;
         case "j":
-            processedSeason = "j";
-            break;
         case "s":
             processedSeason = "s";
             break;
@@ -252,7 +250,10 @@ function smartParseInput(input, level) {
     var _a, _b;
     //4 digit numbers could mean either a year or a subject code; use the first 2 digits of the number to decide.
     //2 digit numbers can mean either a year or a component code; parse [a-z]23 as a year, but 23 by itself is ambiguous. Possibly use positioning?
-    //"s" without numbers directly after means syllabus, 
+    //"s" without numbers directly after means syllabus
+    //Some people might specify the season char and the year separately like "summer 2022"
+    //Years like "22" cannot be accepted as it might also mean component 22
+    //so if separate, year must be a 4 digit year
     input = input.toLowerCase();
     //Check for documents
     const cleanedInput = input.replace(/[ \-_\/]/g, "");
@@ -261,7 +262,7 @@ function smartParseInput(input, level) {
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //Attempt to find season
     findSeason: {
-        const x00Match = input.match(/(m|f|j|s|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+        const x00Match = input.match(/(f|m|s|j|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
         //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
         //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
         //Negative lookahead used to match s209701 but not s9702
@@ -274,8 +275,6 @@ function smartParseInput(input, level) {
                     seasonChar = "m";
                     break;
                 case "j":
-                    seasonChar = "j";
-                    break;
                 case "s":
                     seasonChar = "s";
                     break;

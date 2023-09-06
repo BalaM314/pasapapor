@@ -188,9 +188,7 @@ function validateSeason(season:string):string | null {
 	switch(seasonChar){
 		case "m": case "f":
 			processedSeason = "m"; break;
-		case "j":
-			processedSeason = "j"; break;
-		case "s":
+		case "j": case "s":
 			processedSeason = "s"; break;
 		case "w": case "o": case "n":
 			processedSeason = "w"; break;
@@ -260,7 +258,10 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 
 	//4 digit numbers could mean either a year or a subject code; use the first 2 digits of the number to decide.
 	//2 digit numbers can mean either a year or a component code; parse [a-z]23 as a year, but 23 by itself is ambiguous. Possibly use positioning?
-	//"s" without numbers directly after means syllabus, 
+	//"s" without numbers directly after means syllabus
+	//Some people might specify the season char and the year separately like "summer 2022"
+	//Years like "22" cannot be accepted as it might also mean component 22
+	//so if separate, year must be a 4 digit year
 	input = input.toLowerCase();
 	
 	//Check for documents
@@ -270,7 +271,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	let
 		syllabus:boolean = false,
 		year:string | null = null,
-		seasonChar:'m' | 's' | 'j' | 'w' | null = null,
+		seasonChar:'m' | 's' | 'w' | null = null,
 		subjectCode:string | null = null,
 		componentCode:string | null = null,
 		componentType:string | null = null,
@@ -280,7 +281,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 
 	//Attempt to find season
 	findSeason: {
-		const x00Match = input.match(/(m|f|j|s|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+		const x00Match = input.match(/(f|m|s|j|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
 		//Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
 		//4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
 		//Negative lookahead used to match s209701 but not s9702
@@ -290,9 +291,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 				//Try to set the season, but if it's incorrect cancel
 				case "m": case "f":
 					seasonChar = "m"; break;
-				case "j":
-					seasonChar = "j"; break;
-				case "s":
+				case "j": case "s":
 					seasonChar = "s"; break;
 				case "w": case "o": case "n":
 					seasonChar = "w"; break;
