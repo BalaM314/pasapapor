@@ -258,7 +258,7 @@ function smartParseInput(input, level) {
     const cleanedInput = input.replace(/[ \-_\/]/g, "");
     if (cleanedInput in otherDocuments)
         return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
-    let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null;
+    let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //Attempt to find season
     findSeason: {
         const x00Match = input.match(/(m|f|j|s|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
@@ -303,6 +303,10 @@ function smartParseInput(input, level) {
     if (syllabusMatch) {
         syllabus = true;
         input = input.replace(syllabusMatch[0], "@");
+        //Look for well-demarcated syllabus raw year specifier (only accepts hyphens to separate years)
+        const rawYearSpecifierMatch = input.match(/(?<=[ \-_\/]|^)(\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)(?=[ \-_\/]|$)/);
+        if (rawYearSpecifierMatch)
+            [, syllabusRawYearSpecifier] = rawYearSpecifierMatch;
     }
     //Search for component code
     const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
@@ -362,7 +366,17 @@ function smartParseInput(input, level) {
         return [new Papor(subjectCode, `${seasonChar}${year}`, componentType)];
     }
     else if (syllabus == true && subjectCode != null) {
-        //TODO
+        if (syllabusRawYearSpecifier == null) {
+            //Try to get it by parsing the remaining input
+            const rawYearSpecifierMatch = input.match(/20\d\d-20\d\d|\d\d-\d\d|20\d\d|\d\d|\d/);
+            if (rawYearSpecifierMatch)
+                [, syllabusRawYearSpecifier] = rawYearSpecifierMatch;
+        }
+        const link = getSyllabusLink(subjectCode, syllabusRawYearSpecifier);
+        return [{ url: () => link }];
+    }
+    else {
+        throw new Error("Improperly formatted input"); //TODO fix
     }
 }
 function getPaporFromInput(input, level) {
