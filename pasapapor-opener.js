@@ -292,7 +292,7 @@ function smartParseInput(input, level) {
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
     findSeason: {
-        const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)[ \-_\/]*(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+        const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
         //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
         //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
         //Negative lookahead used to match s209701 but not s9702
@@ -339,7 +339,7 @@ function smartParseInput(input, level) {
     }
     //Search for expanded component type
     if (componentType == null) {
-        const expandedComponentTypeMatch = input.match(/(confidential[ \-_\/]*?instructions)|(examiner[ \-_\/]*?report)|(grade[ \-_\/]*?thresholds)|(marking[ \-_\/]*?scheme)|(question[ \-_\/]*?paper)|(insert)|(source[ \-_\/]*?files?)|(information[ \-_\/]*?report)|(pre[ \-_\/]*?release[ \-_\/]*?materials)/);
+        const expandedComponentTypeMatch = input.match(/(confidential[ \-_\/]*?instructions?)|(examiner[ \-_\/]*?report)|(grade[ \-_\/]*?thresholds)|(marking[ \-_\/]*?scheme)|(question[ \-_\/]*?paper)|(insert)|(source[ \-_\/]*?files?)|(information[ \-_\/]*?report)|(pre[ \-_\/]*?release[ \-_\/]*?materials)/);
         if (expandedComponentTypeMatch) {
             const [, ci, er, gt, ms, qp, _in, sf, ir, pm] = expandedComponentTypeMatch;
             componentType =
@@ -401,11 +401,13 @@ function smartParseInput(input, level) {
             }
         }
     }
-    console.log(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
+    /*console.log(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
         syllabus, year, seasonChar, subjectID: subjectCode, componentCode, componentType,
         remainingInput: input, remainingStrings
-    });
+    });*/
     if (subjectCode != null && seasonChar != null && year != null && componentType != null && componentCode != null) {
+        if (componentType && !isTypeValid(subjectCode, componentType, componentCode))
+            throw new Error(`Type ${componentType} is not a valid type for component ${subjectCode}/${componentCode}`);
         return [new Papor(subjectCode, `${seasonChar}${year}`, componentType, componentCode)];
     }
     else if (subjectCode != null && seasonChar != null && year != null && componentType == null && componentCode != null) {
