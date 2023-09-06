@@ -345,11 +345,13 @@ function smartParseInput(input, level) {
                     subjectCode = getIDFromName(str, level);
                     break;
                 }
-                catch (err) { }
+                catch (err) {
+                    //TODO do something with the error
+                }
             }
         }
     }
-    console.dir(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
+    console.log(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
         syllabus, year, seasonChar, subjectID: subjectCode, componentCode, componentType,
         remainingInput: input, remainingStrings
     });
@@ -376,7 +378,23 @@ function smartParseInput(input, level) {
         return [{ url: () => link }];
     }
     else {
-        throw new Error("Improperly formatted input"); //TODO fix
+        //Try to guess what the user was trying to do
+        //Syllabus requires a very minimal amount of info (subject and a phrase implying syllabus, such as "s" or "syl"), so do that last
+        if (subjectCode != null && componentType != null && componentCode != null) { //missing season
+            throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${componentType} ${componentCode}). If you are, please specify the year and season, like this: (${subjectCode} s22 ${componentType} ${componentCode})`);
+        }
+        else if (subjectCode != null && seasonChar != null && year != null && componentType != null) { //missing component code
+            throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${seasonChar}${year} ${componentType}). If you are, please specify the component code, like this: (${subjectCode} ${seasonChar}${year} ${componentType} 12). You can only omit the component code if you're trying to open something that doesnt have a code, such as the grade thresholds (${subjectCode} ${seasonChar}${year} gt) or the examiner report (${subjectCode} ${seasonChar}${year} er).`);
+        }
+        else if (subjectCode == null && (seasonChar != null || year != null || componentType != null || componentCode != null)) { //unknown subject, and at least one other thing
+            throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar !== null && seasonChar !== void 0 ? seasonChar : "x"}${year !== null && year !== void 0 ? year : "??"} ${componentType !== null && componentType !== void 0 ? componentType : "xx"} ${componentCode !== null && componentCode !== void 0 ? componentCode : "??"}). If you are, please specify the subject, like this example: (9231 s21 qp 43).`);
+        }
+        else if (syllabus) {
+            throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a syllabus, please specify the subject.");
+        }
+        else {
+            throw new Error("Pasapapor couldn't figure out what you're trying to open.");
+        }
     }
 }
 function getPaporFromInput(input, level) {
