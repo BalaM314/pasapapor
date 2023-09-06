@@ -392,6 +392,7 @@ function smartParseInput(input, level) {
         const yearMatch = input.match(/20(\d\d)/);
         if (yearMatch) {
             year = yearMatch[1];
+            input = input.replace(yearMatch[0], "@");
             console.log(`Found year with looser search: "${yearMatch[0]}"`);
         }
         else
@@ -403,6 +404,7 @@ function smartParseInput(input, level) {
             if (char == null)
                 never();
             seasonChar = char;
+            input = input.replace(seasonMatch[0], "@");
             console.log(`Found season with looser search: "${seasonMatch[0]}"`);
         }
         else
@@ -493,6 +495,9 @@ function smartParseInput(input, level) {
         else if (subjectCode == null && (seasonChar != null || year != null || componentType != null || componentCode != null)) { //unknown subject, and at least one other thing
             if (subjectErrorMessages.size == 1) {
                 throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar !== null && seasonChar !== void 0 ? seasonChar : "x"}${year !== null && year !== void 0 ? year : "??"} ${componentType !== null && componentType !== void 0 ? componentType : "xx"} ${componentCode !== null && componentCode !== void 0 ? componentCode : "??"}), but Pasapapor was unable to determine the subject due to the following error:\n${subjectErrorMessages.values().next().value}`);
+            }
+            else {
+                console.log(subjectErrorMessages);
             }
             const bestErrorMessage = [...subjectErrorMessages.values()].sort((a, b) => b.length - a.length)[0];
             throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar !== null && seasonChar !== void 0 ? seasonChar : "x"}${year !== null && year !== void 0 ? year : "??"} ${componentType !== null && componentType !== void 0 ? componentType : "xx"} ${componentCode !== null && componentCode !== void 0 ? componentCode : "??"}). If you are, please specify the subject, like this example: (9231 s21 qp 43).`

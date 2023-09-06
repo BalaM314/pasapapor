@@ -383,6 +383,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		const yearMatch = input.match(/20(\d\d)/);
 		if(yearMatch){
 			year = yearMatch[1];
+			input = input.replace(yearMatch[0], "@");
 			console.log(`Found year with looser search: "${yearMatch[0]}"`);
 		} else console.log(`Unable to find year with looser search`);
 		//Either any of the words, or any of the characters that do not have letters immediately before or after (that means we matched a random letter in a longer word)
@@ -391,6 +392,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 			const char = resolveSeasonChar(seasonMatch[0]);
 			if(char == null) never();
 			seasonChar = char;
+			input = input.replace(seasonMatch[0], "@");
 			console.log(`Found season with looser search: "${seasonMatch[0]}"`);
 		} else console.log(`Unable to find season with looser search`);
 	}
@@ -471,6 +473,8 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		} else if(subjectCode == null && (seasonChar != null || year != null || componentType != null || componentCode != null)){ //unknown subject, and at least one other thing
 			if(subjectErrorMessages.size == 1){
 				throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}), but Pasapapor was unable to determine the subject due to the following error:\n${subjectErrorMessages.values().next().value}`);
+			} else {
+				console.log(subjectErrorMessages);
 			}
 			const bestErrorMessage = [...subjectErrorMessages.values()].sort((a, b) => b.length - a.length)[0];
 			throw new Error(
