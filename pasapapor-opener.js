@@ -17,11 +17,11 @@ var Level;
 })(Level || (Level = {}));
 //Data
 const otherDocuments = (d => Object.fromEntries(d.map(([url, ...names]) => names.map(name => [name, { url: () => url }])).flat(1)))([
-    ["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09"],
-    ["https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf", "mf19"],
-    ["https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf", "mf10"],
-    ["https://www.cambridgeinternational.org/images/344616-list-of-formulae-and-statistical-tables.pdf", "mf20"],
-    ["https://www.seab.gov.sg/content/syllabus/alevel/2017Syllabus/ListMF26.pdf", "mf26"],
+    ["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
+    ["https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf", "mf19", "math mf19"],
+    ["https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf", "mf10", "math mf10"],
+    ["https://www.cambridgeinternational.org/images/344616-list-of-formulae-and-statistical-tables.pdf", "mf20", "math mf20"],
+    ["https://www.seab.gov.sg/content/syllabus/alevel/2017Syllabus/ListMF26.pdf", "mf26", "math mf26"],
     ["https://www.cambridgeinternational.org/Images/164870-2016-specimen-data-booklet.pdf", "db", "chem db", "data booklet", "chem data booklet", "chemistry data booklet", "9701 db"]
 ]);
 //JSON.stringify(Object.fromEntries(Array.from(temp0.children).map(el => [el.innerText.match(/\((\d+)\)/)?.[1], el.innerText]).filter(([id, text]) => id != undefined)));
@@ -242,8 +242,117 @@ function isTypeValid(subjectID, type, code) {
     }
 }
 function never() { throw new Error("code failed"); }
+function smartParseInput(input, level) {
+    //List of things that the input could mean:
+    //Document such as mf19 or chem db
+    //Syllabus
+    //Pasapapor
+    //Pasapapor with type omitted indicating QP and MS
+    //Grade threshold or examiner report
+    var _a, _b;
+    //4 digit numbers could mean either a year or a subject code; use the first 2 digits of the number to decide.
+    //2 digit numbers can mean either a year or a component code; parse [a-z]23 as a year, but 23 by itself is ambiguous. Possibly use positioning?
+    //"s" without numbers directly after means syllabus, 
+    input = input.toLowerCase();
+    //Check for documents
+    const cleanedInput = input.replace(/[ \-_\/]/g, "");
+    if (cleanedInput in otherDocuments)
+        return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
+    let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null;
+    //Attempt to find season
+    findSeason: {
+        const x00Match = input.match(/(m|f|j|s|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+        //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
+        //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
+        //Negative lookahead used to match s209701 but not s9702
+        if (x00Match) {
+            const [, _seasonChar, _year] = x00Match;
+            switch (_seasonChar) {
+                //Try to set the season, but if it's incorrect cancel
+                case "m":
+                case "f":
+                    seasonChar = "m";
+                    break;
+                case "j":
+                    seasonChar = "j";
+                    break;
+                case "s":
+                    seasonChar = "s";
+                    break;
+                case "w":
+                case "o":
+                case "n":
+                    seasonChar = "w";
+                    break;
+                default: break findSeason; //jump labels ftw
+            }
+            //Set the year
+            if (_year.length == 1)
+                year = "0" + _year; //9 -> 09
+            else if (_year.length == 2)
+                year = _year; //23 -> 23, no changes necessary
+            else if (_year.length == 4)
+                year = _year.slice(2); //2023 -> 23
+            else
+                never();
+            input = input.replace(x00Match[0], "@");
+        }
+    }
+    //Search for syllabus
+    const syllabusMatch = input.match(/(?<![a-z])(s|syl|syll|syllabus)(?![a-z])/); //\b does not work because it thinks _ is a word
+    if (syllabusMatch) {
+        syllabus = true;
+        input = input.replace(syllabusMatch[0], "@");
+    }
+    //Search for component code
+    const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
+    if (componentCodeMatch) {
+        [, componentCode] = componentCodeMatch;
+        input = input.replace(componentCodeMatch[0], "@");
+    }
+    //Search for component type
+    const componentTypeMatch = input.match(/(?<![a-z])(ci|er|gt|ms|qp|in|sf|ir|pm)(?![a-z])/);
+    if (componentTypeMatch) {
+        [, componentType] = componentTypeMatch;
+        input = input.replace(componentTypeMatch[0], "@");
+    }
+    //Search for syllabus code
+    const subjectCodeMatch = input.match(/(?<![a-z])([0789]\d\d\d)(?![a-z])/);
+    if (subjectCodeMatch) {
+        [, subjectCode] = subjectCodeMatch;
+        input = input.replace(subjectCodeMatch[0], "@");
+    }
+    let remainingStrings;
+    if (subjectCode == null) {
+        //Try to get the subject name
+        remainingStrings = (_a = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _a !== void 0 ? _a : []; //this regex is probably O(n^2) or worse
+        for (const str of remainingStrings) {
+            try {
+                subjectCode = getIDFromName(str, level);
+                break;
+            }
+            catch (err) { }
+        }
+        if (subjectCode == null) {
+            //Try a different match
+            remainingStrings = (_b = input.match(/[a-z]+/g)) !== null && _b !== void 0 ? _b : [];
+            for (const str of remainingStrings) {
+                try {
+                    subjectCode = getIDFromName(str, level);
+                    break;
+                }
+                catch (err) { }
+            }
+        }
+    }
+    console.dir(`Smart parser output: ${subjectCode} ${seasonChar}${year} ${componentType} ${componentCode}`, {
+        syllabus, year, seasonChar, subjectID: subjectCode, componentCode, componentType,
+        remainingInput: input, remainingStrings
+    });
+}
 function getPaporFromInput(input, level) {
     var _a;
+    smartParseInput(input, level);
     let lowercaseInput = input.toLowerCase();
     if (otherDocuments[lowercaseInput])
         return [otherDocuments[lowercaseInput]];
