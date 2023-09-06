@@ -388,30 +388,35 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	}
 
 	let remainingStrings;
+	let subjectErrorMessages = new Set<string>;
 	if(subjectCode == null){
 		console.log(`Parsing remaining input to find subject code <<${input}>>`);
 		remainingStrings = input.match(/[a-z ]*[a-z][a-z ]*/g) ?? []; //this regex is probably O(n^2) or worse
 		//TODO handle stuff like further___math
 		for(const str of remainingStrings){
+			if(str.trim() == "") continue;
 			try {
-				console.log(`Checking <<${str}>>`);
-				subjectCode = getIDFromName(str, level);
+				console.log(`Checking <<${str.trim()}>>`);
+				subjectCode = getIDFromName(str.trim(), level);
 				console.log(`Found subject code ${subjectCode}`);
 				break;
-			} catch(err){}
+			} catch(err){
+				subjectErrorMessages.add((err as Error).message);
+			}
 		}
 		console.log(`Parsing remaining input again but with different splitting logic`);
 		if(subjectCode == null){
 			//Try a different match
 			remainingStrings = input.match(/[a-z]+/g) ?? [];
 			for(const str of remainingStrings){
+				if(str.trim() == "") continue;
 				try {
-					console.log(`Checking <<${str}>>`);
-					subjectCode = getIDFromName(str, level);
+					console.log(`Checking <<${str.trim()}>>`);
+					subjectCode = getIDFromName(str.trim(), level);
 					console.log(`Found subject code ${subjectCode}`);
 					break;
 				} catch(err){
-					//TODO do something with the error
+					subjectErrorMessages.add((err as Error).message);
 				}
 			}
 		}
@@ -455,7 +460,14 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		} else if(subjectCode != null && seasonChar != null && year != null && componentType != null){ //missing component code
 			throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${seasonChar}${year} ${componentType}). If you are, please specify the component code, like this: (${subjectCode} ${seasonChar}${year} ${componentType} 12). You can only omit the component code if you're trying to open something that doesnt have a code, such as the grade thresholds (${subjectCode} ${seasonChar}${year} gt) or the examiner report (${subjectCode} ${seasonChar}${year} er).`);
 		} else if(subjectCode == null && (seasonChar != null || year != null || componentType != null || componentCode != null)){ //unknown subject, and at least one other thing
-			throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}). If you are, please specify the subject, like this example: (9231 s21 qp 43).`);
+			if(subjectErrorMessages.size == 1){
+				throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}), but Pasapapor was unable to determine the subject due to the following error:\n${subjectErrorMessages.values().next().value}`);
+			}
+			const bestErrorMessage = [...subjectErrorMessages.values()].sort((a, b) => b.length - a.length)[0];
+			throw new Error(
+				`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}). If you are, please specify the subject, like this example: (9231 s21 qp 43).`
+				+ (bestErrorMessage ? ` The following error message may be helpful: ${bestErrorMessage}` : "")
+			);
 		} else if(syllabus){
 			throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a syllabus, please specify the subject.");
 		} else {
