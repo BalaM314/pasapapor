@@ -362,6 +362,19 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 		remainingInput: input, remainingStrings
 	});
 
+	if(subjectCode != null && seasonChar != null && year != null && componentType != null && componentCode != null){
+		return [new Papor(subjectCode, `${seasonChar}${year}`, componentType, componentCode)];
+	} else if(subjectCode != null && seasonChar != null && year != null && componentType == null && componentCode != null){
+		return [
+			new Papor(subjectCode, `${seasonChar}${year}`, "qp", componentCode),
+			new Papor(subjectCode, `${seasonChar}${year}`, "ms", componentCode),
+		];
+	} else if(subjectCode != null && seasonChar != null && year != null && (componentType == "er" || componentType == "gt") && componentCode == null){
+		return [new Papor(subjectCode, `${seasonChar}${year}`, componentType)];
+	} else if(syllabus == true && subjectCode != null){
+		//TODO
+	}
+
 
 	
 }
