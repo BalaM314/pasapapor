@@ -510,8 +510,8 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
 		return [{url: () => getSyllabusLink(subjectID, specifier)}];
 	} else {
-		console.log(`Input did not match any known patterns, erroring`);
-		throw new Error("Improperly formatted input. Enter the information in the form (subject) (season) (type) (code), like this: math s21 qp 43");
+		console.log(`Input did not match any known patterns, triggering smart parser...`);
+		return smartParseInput(input, level);
 	}
 
 	season = validateSeason(season) ?? (() => {throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`)})();
