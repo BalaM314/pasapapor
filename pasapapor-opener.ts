@@ -25,7 +25,7 @@ const otherDocuments: {
 	[index:string]: Openable
 } = (d => Object.fromEntries(
 	d.map(([url, ...names]) =>
-		names.map(name => [name, {url: () => url, cleanString: () => name}] as const)
+		names.map(name => [name.replaceAll(" ", ""), {url: () => url, cleanString: () => name}] as const)
 	).flat(1)
 ))([
 	["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
@@ -292,7 +292,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	const cleanedInput = input.replace(/[ \-_\/]/g, "");
 	if(cleanedInput in otherDocuments){
 		console.log(`Input matched otherdocument`);
-		return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
+		return [otherDocuments[cleanedInput]];
 	}
 
 	let
@@ -493,16 +493,16 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	}
 
 
-	
 }
 
 function getPaporFromInput(input:string, level:Level | null):Openable[] {
-	
+
 	console.log(`Parsing input: <<${input}>>`);
 	let lowercaseInput = input.toLowerCase();
-	if(otherDocuments[lowercaseInput]){
+	const cleanedInput = lowercaseInput.replace(/[ \-_\/]/g, "");
+	if(otherDocuments[cleanedInput]){
 		console.log(`Input matched pattern: otherdocument`);
-		return [otherDocuments[lowercaseInput]];
+		return [otherDocuments[cleanedInput]];
 	}
 	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\w{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
 	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);

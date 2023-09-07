@@ -19,7 +19,7 @@ var Level;
     Level["A_LEVELS"] = "A Levels";
 })(Level || (Level = {}));
 //Data
-const otherDocuments = (d => Object.fromEntries(d.map(([url, ...names]) => names.map(name => [name, { url: () => url, cleanString: () => name }])).flat(1)))([
+const otherDocuments = (d => Object.fromEntries(d.map(([url, ...names]) => names.map(name => [name.replaceAll(" ", ""), { url: () => url, cleanString: () => name }])).flat(1)))([
     ["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
     ["https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf", "mf19", "math mf19"],
     ["https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf", "mf10", "math mf10"],
@@ -299,7 +299,7 @@ function smartParseInput(input, level) {
     const cleanedInput = input.replace(/[ \-_\/]/g, "");
     if (cleanedInput in otherDocuments) {
         console.log(`Input matched otherdocument`);
-        return [otherDocuments[cleanedInput]]; //TODO remove spaces from otherdocuments keys
+        return [otherDocuments[cleanedInput]];
     }
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
@@ -518,9 +518,10 @@ function getPaporFromInput(input, level) {
     var _a;
     console.log(`Parsing input: <<${input}>>`);
     let lowercaseInput = input.toLowerCase();
-    if (otherDocuments[lowercaseInput]) {
+    const cleanedInput = lowercaseInput.replace(/[ \-_\/]/g, "");
+    if (otherDocuments[cleanedInput]) {
         console.log(`Input matched pattern: otherdocument`);
-        return [otherDocuments[lowercaseInput]];
+        return [otherDocuments[cleanedInput]];
     }
     const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\w{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
     const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-zA-Z ()0-9]+?)[ \-_\/]*([a-zA-Z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
