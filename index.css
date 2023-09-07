@@ -14,6 +14,7 @@
 	--header-color: rgb(29, 114, 0);
 	--igcse: #ea5a0b;
 	--as-a: #e11950;
+	--accent-border-color: dimgray;
 }
 
 .darkTheme {
@@ -28,6 +29,7 @@
 	--header-color: yellowgreen;
 	--igcse: #fcc3a5;
 	--as-a: #efa4b9;
+	--accent-border-color: white;
 }
 
 body {
@@ -45,18 +47,12 @@ p {
 	margin: 10px 5px;
 }
 
-
-.lightTheme #pasapapor-select {
-	background-color: inset 0 0 1000px var(--light-theme-background);
-	color: var(--light-theme-text);
-	border: 5px ridge dimgray;
+#pasapapor-select {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	border: 5px ridge var(--accent-border-color);
 }
 
-.darkTheme #pasapapor-select {
-	color: var(--dark-theme-text);
-	background-color: var(--dark-theme-background);
-	border: 5px ridge white;
-}
 
 #content {
 	box-sizing: border-box;
