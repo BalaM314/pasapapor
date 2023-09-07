@@ -10,6 +10,9 @@ const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const errorbox = getElement("#errorbox", HTMLDivElement);
 const headerText = getElement("#header-text", HTMLSpanElement);
 const header = getElement("#header", HTMLDivElement);
+const formatExplanation = getElement("#format-explanation", HTMLDivElement);
+const hoverInfo = getElement("#hover-info", HTMLDivElement);
+const infoHoverSpans = Array.from(formatExplanation.children);
 var Level;
 (function (Level) {
     Level["IGCSE"] = "Cambridge IGCSE";
@@ -592,7 +595,7 @@ function addListeners() {
         if (e.key == "Enter") {
             //If it's enter, open papors
             try {
-                errorbox.style.color = "#8F8";
+                errorbox.style.color = "var(--success-color)";
                 errorbox.innerText = "";
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
@@ -629,7 +632,7 @@ function addListeners() {
                     }
             }
             catch (err) {
-                errorbox.style.color = "#F88";
+                errorbox.style.color = "var(--error-color)";
                 errorbox.innerText = `❗ ${err.message}`;
             }
         }
@@ -681,6 +684,26 @@ function addListeners() {
         else
             el.classList.remove("hide-first-load");
     });
+    infoHoverSpans[0].onmouseenter = infoHoverSpans[0].onclick = () => {
+        hoverInfo.style.color = "var(--a1)";
+        hoverInfo.innerText = `the 4 digit subject code, or name`;
+    };
+    infoHoverSpans[1].onmouseenter = infoHoverSpans[1].onclick = () => {
+        hoverInfo.style.color = "var(--a2)";
+        hoverInfo.innerText = `the season followed by the last two digits of the year, like this: "w21"`;
+    };
+    infoHoverSpans[2].onmouseenter = infoHoverSpans[2].onclick = () => {
+        hoverInfo.style.color = "var(--a3)";
+        hoverInfo.innerText = `"qp", "ms", etc. If omitted, both qp and ms will be opened.`;
+    };
+    infoHoverSpans[3].onmouseenter = infoHoverSpans[3].onclick = () => {
+        hoverInfo.style.color = "var(--a4)";
+        hoverInfo.innerText = `the 2 digit component code, like "21"`;
+    };
+    // infoHoverSpans.forEach(span => span.addEventListener("mouseleave", () => {
+    // 	hoverInfo.style.color = "unset";
+    // 	hoverInfo.innerText = `Hover for more information`;
+    // }));
 }
 ;
 addListeners();
