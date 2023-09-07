@@ -1,19 +1,18 @@
-const content = getElement("div#content", HTMLDivElement);
 const toggleBtn = getElement("button.theme", HTMLButtonElement);
 const icon = getElement("span.material-icons", HTMLSpanElement);
 
 
 function enableDarkMode() {
 	localStorage.setItem("theme", "dark");
-	content.classList.remove("lightTheme");
-	content.classList.add("darkTheme");
+	document.body.classList.remove("lightTheme");
+	document.body.classList.add("darkTheme");
 	icon.innerText = "light_mode";
 }
 
 function enableLightMode() {
 	localStorage.setItem("theme", "light");
-	content.classList.remove("darkTheme");
-	content.classList.add("lightTheme");
+	document.body.classList.remove("darkTheme");
+	document.body.classList.add("lightTheme");
 	icon.innerText = "dark_mode";
 }
 

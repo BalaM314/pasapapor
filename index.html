@@ -28,10 +28,10 @@
 			gtag('config', 'G-EWNZM0GRS2');
 		</script>
 	</head>
-	<body>
-		<div id="content" class="darkTheme">
+	<body class="darkTheme">
+		<div id="content">
 			<div id="header">
-				<a href="https://github.com/BalaM314/pasapapor" target="_blank" style="filter: invert(); background-image:url('https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg'); width: 50px; height: 50px; display: block;"></a>
+				<a href="https://github.com/BalaM314/pasapapor" target="_blank" id="github-icon"></a>
 				<span id="header-text">Pasapapor: A CAIE Past Paper Opener</span>
 				<button class="theme">
 					<span class="material-icons"></span>
@@ -41,9 +41,9 @@
 			<div style = "display: grid; grid-template-columns: 0.5fr 1fr 0.5fr; align-items: center; margin-bottom: 30px;">
 				<div id="level-select">
 					<input type="radio" id="igcse" name="level" value="igcse">
-					<label for="igcse" style="color: #fcc3a5;">IGCSE</label><br>
+					<label for="igcse" style="color: var(--igcse)">IGCSE</label><br>
 					<input type="radio" id="as-a" name="level" value="as/a">
-					<label for="as-a" style="color: #efa4b9;">AS/A</label><br>
+					<label for="as-a" style="color: var(--as-a)">AS/A</label><br>
 				</div>
 				<input type="text" id="pasapapor-select" placeholder="Try: 9231 w21 qp 43">
 				<div id="errorbox" style="grid-area: 2 / 2;"></div>
