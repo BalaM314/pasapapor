@@ -38,7 +38,7 @@
 				</button>
 			</div>
 			<!-- <p style="color: gray">For those who are tired of copying the url into a new tab and changing "qp" to "ms"</p> -->
-			<div style = "display: grid; grid-template-columns: 0.5fr 1fr 0.5fr; align-items: center; margin-bottom: 30px;">
+			<div id="interface">
 				<div id="level-select">
 					<input type="radio" id="igcse" name="level" value="igcse">
 					<label for="igcse" style="color: var(--igcse)">IGCSE</label><br>
@@ -46,7 +46,7 @@
 					<label for="as-a" style="color: var(--as-a)">AS/A</label><br>
 				</div>
 				<input type="text" id="pasapapor-select" placeholder="Try: 9231 w21 43">
-				<div id="errorbox" style="grid-area: 2 / 2;"></div>
+				<div id="errorbox"></div>
 			</div>
 			<p>Type the paper information with the following format:</p>
 			<div id="format-explanation">
@@ -55,7 +55,7 @@
 				<span title='"qp" or "ms" or sometimes "in". If omitted, both qp and ms will be opened.'>(paper type)</span>
 				<span title="the 2 digit component code">(component code)</span>
 			</div>
-			<div id="hover-info">
+			<div id="hover-info" title="hover over the things on the above line, not this">
 				Hover for more information
 			</div>
 			<div class="hide-first-load">

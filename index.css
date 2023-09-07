@@ -76,8 +76,38 @@ p {
 	color: var(--text-color);
 }
 
+@media screen and (max-width: 600px) { 
+	#content {
+		margin: 0;
+		padding: 10px;
+	}
+}
+
 #content ul li {
 	padding: 0.3em 1em;
+}
+
+#interface {
+	display: grid;
+	grid-template-columns: 0.5fr 1fr 0.5fr;
+	align-items: center;
+	margin-bottom: 30px;
+}
+
+#errorbox {
+	grid-area: 2 / 2;
+}
+
+@media screen and (max-width: 600px) {
+	#interface {
+		grid-template-columns: 1fr;
+	}
+	#errorbox {
+		grid-area: auto;
+	}
+	#pasapapor-select {
+		margin: 10px 0;
+	}
 }
 
 #pasapapor-select {
@@ -90,12 +120,20 @@ p {
 }
 #format-explanation {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
 	margin: 1% 0;
 }
 #format-explanation span {
 	margin: 0 1%;
 	font-size: 150%;
+}
+@media screen and (max-width: 600px) {
+	#format-explanation {
+		display: flex;
+		justify-content: center;
+		margin: 1% 0;
+	}
 }
 #format-explanation span:hover {
 	text-shadow: 0px 0px 10px white;
