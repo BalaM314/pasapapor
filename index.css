@@ -76,16 +76,21 @@ p {
 	color: var(--text-color);
 }
 
+#content ul li {
+	padding: 0.3em 1em;
+}
+
 @media screen and (max-width: 600px) { 
 	#content {
 		margin: 0;
 		padding: 10px;
 	}
+	#content ul li {
+		padding: 0.1em 0;
+		margin-left: 10px;
+	}
 }
 
-#content ul li {
-	padding: 0.3em 1em;
-}
 
 #interface {
 	display: grid;
