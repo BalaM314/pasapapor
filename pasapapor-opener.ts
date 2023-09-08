@@ -15,6 +15,9 @@ const formatExplanation = getElement("#format-explanation", HTMLDivElement);
 const hoverInfo = getElement("#hover-info", HTMLDivElement);
 const infoHoverSpans = Array.from(formatExplanation.children) as HTMLSpanElement[];
 
+const now = new Date;
+const isAprilFools = (now.getDate() == 1 && now.getMonth() == 4);
+
 enum Level {
 	IGCSE = "Cambridge IGCSE",
 	A_LEVELS = "A Levels"
@@ -654,6 +657,9 @@ function addListeners(){
 		hoverInfo.style.color = "var(--a4)";
 		hoverInfo.innerText = `the 2 digit component code, like "21"`;
 	};
+	if(window.innerWidth < 600){
+		hoverInfo.innerText = "Tap for more info";
+	}
 	// infoHoverSpans.forEach(span => span.addEventListener("mouseleave", () => {
 	// 	hoverInfo.style.color = "unset";
 	// 	hoverInfo.innerText = `Hover for more information`;
