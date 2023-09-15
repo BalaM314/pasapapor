@@ -20,6 +20,48 @@ var Level;
     Level["IGCSE"] = "Cambridge IGCSE";
     Level["A_LEVELS"] = "A Levels";
 })(Level || (Level = {}));
+const openedPapers = {
+    lsKey: "pasapapor-openedpapers",
+    storage: {},
+    load() {
+        const data = localStorage.getItem(this.lsKey);
+        if (data) {
+            function fail(message) {
+                throw new Error(message);
+            }
+            try {
+                const dataObj = JSON.parse(data);
+                if (typeof dataObj != "object" || dataObj == null)
+                    fail("invalid json");
+                for (const [k, v] of Object.entries(dataObj)) {
+                    if (!/(\d{4})_([msw]\d{2})_(\d{2})/.test(k))
+                        fail(`invalid key ${k}`);
+                    if (typeof v != "object" || v == null)
+                        fail("invalid json");
+                    if (!("status" in v && ["complete", "partial"].includes(v.status) && "dateUpdated" in v && typeof v.dateUpdated == "number"))
+                        fail("bad data");
+                    this.storage[k] = {
+                        status: v.status,
+                        dateUpdated: new Date(v.dateUpdated)
+                    };
+                }
+            }
+            catch (err) {
+                console.error(err);
+                localStorage.setItem(`${this.lsKey}-invalid-${Date.now()}`, data);
+                localStorage.removeItem(this.lsKey);
+            }
+        }
+    },
+    save() {
+        localStorage.setItem(this.lsKey, JSON.stringify(this.storage, (k, v) => {
+            if (k == "dateUpdated" && v instanceof Date)
+                return v.getTime();
+            else
+                return v;
+        }));
+    }
+};
 //Data
 const otherDocuments = (d => Object.fromEntries(d.map(([url, ...names]) => names.map(name => [name.replaceAll(" ", ""), { url: () => url, cleanString: () => name }])).flat(1)))([
     ["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
@@ -100,6 +142,13 @@ class Papor {
         else {
             return `${this.subjectID}_${this.season}_${this.type}`;
         }
+    }
+    shortString() {
+        if (this.code) {
+            return `${this.subjectID}_${this.season}_${this.code}`;
+        }
+        else
+            return null;
     }
 }
 function getSyllabusLink(code, specifier) {
@@ -710,6 +759,10 @@ function addListeners() {
     // 	hoverInfo.style.color = "unset";
     // 	hoverInfo.innerText = `Hover for more information`;
     // }));
+    window.addEventListener("beforeunload", () => {
+        openedPapers.save();
+    });
 }
 ;
 addListeners();
+openedPapers.load();
