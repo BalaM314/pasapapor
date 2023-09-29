@@ -306,7 +306,6 @@ function isTypeValid(subjectID:string, type:string, code:string | undefined):boo
 
 function resolveSeasonChar(seasonString:string):'m' | 's' | 'w' | null {
 	switch(seasonString){
-		//Try to set the season, but if it's incorrect cancel
 		case "spring": case "feb": case "march": case "mar": case "m": case "f":
 			return "m";
 		case "summer": case "may": case "june": case "jun": case "j": case "s":
@@ -355,23 +354,33 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	//TODO: attempt to search for each component multiple times, with progressively decreasing strictness
 
 	//Attempt to find season
-	findSeason: {
-		const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
-		//Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
-		//4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
-		//Negative lookahead used to match s209701 but not s9702
-		if(x00Match){
-			const [, _season, _year] = x00Match;
-			const char = resolveSeasonChar(_season);
-			if(char) seasonChar = char;
-			else break findSeason; //jump labels ftw
-			//Set the year
-			if(_year.length == 1) year = "0" + _year; //9 -> 09
-			else if(_year.length == 2) year = _year; //23 -> 23, no changes necessary
-			else if(_year.length == 4) year = _year.slice(2); //2023 -> 23
+	const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+	//Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
+	//4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
+	//Negative lookahead used to match s209701 but not s9702
+	if(x00Match){
+		const [, _season, _year] = x00Match;
+		const char = resolveSeasonChar(_season);
+		if(char) seasonChar = char;
+		else never();
+		//Set the year
+		if(_year.length == 1) year = "0" + _year; //9 -> 09
+		else if(_year.length == 2) year = _year; //23 -> 23, no changes necessary
+		else if(_year.length == 4) year = _year.slice(2); //2023 -> 23
+		else never();
+		input = input.replace(x00Match[0], "@");
+		console.log(`Found season and year: "${x00Match[0]}"`);
+	} else {
+		const xy00Match = input.match(/(F\/M|M\/J|O\/N)(\d\d)/);
+		if(xy00Match){
+			const [, _season, _year] = xy00Match;
+			if(_season == "F/M") seasonChar = "m";
+			else if(_season == "M/J") seasonChar = "s";
+			else if(_season == "O/N") seasonChar = "w";
 			else never();
-			input = input.replace(x00Match[0], "@");
-			console.log(`Found season and year: "${x00Match[0]}"`);
+			year = _year;
+			input = input.replace(xy00Match[0], "@");
+			console.log(`Found season and year: "${xy00Match[0]}" -> ${seasonChar}${year}`);
 		} else console.log(`Unable to find season and year`);
 	}
 
