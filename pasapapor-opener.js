@@ -378,14 +378,14 @@ function smartParseInput(input, level) {
         console.log(`Found season and year: "${x00Match[0]}"`);
     }
     else {
-        const xy00Match = input.match(/(F\/M|M\/J|O\/N)(\d\d)/);
+        const xy00Match = input.match(/(f\/m|m\/j|o\/n)\/(\d\d)/);
         if (xy00Match) {
             const [, _season, _year] = xy00Match;
-            if (_season == "F/M")
+            if (_season == "f/m")
                 seasonChar = "m";
-            else if (_season == "M/J")
+            else if (_season == "m/j")
                 seasonChar = "s";
-            else if (_season == "O/N")
+            else if (_season == "o/n")
                 seasonChar = "w";
             else
                 never();
@@ -591,7 +591,7 @@ function getPaporFromInput(input, level) {
     const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*([a-z]{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
     const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
     const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(gt|er)[ \-_\/]*$/);
-    const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*$/);
+    const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*([a-z]{2})?[ \-_\/]*$/);
     const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]+(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
     let subjectID, season, type, code;
     if (regularMatchData != null) {
@@ -609,7 +609,7 @@ function getPaporFromInput(input, level) {
     else if (alternateMatchData != null) {
         console.log(`Input matched pattern: alternate`);
         let m, s, w, year;
-        [, subjectID, code, m, s, w, year] = alternateMatchData;
+        [, subjectID, code, m, s, w, year, type] = alternateMatchData;
         if (m) {
             season = `m${year}`;
         }
