@@ -656,6 +656,12 @@ function addListeners(){
 		}
 	});
 
+	window.addEventListener("keydown", e => {
+		if(e.key == ";" && e.ctrlKey){
+			pasapaporInput.value = "!$*&U!%# further maths wt5y5hwinter 2022questionpaper22";
+		}
+	});
+
 	//When the selected level is changed
 	buttonAsa.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.A_LEVELS));
 	buttonIgcse.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.IGCSE));
