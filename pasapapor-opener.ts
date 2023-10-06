@@ -191,6 +191,24 @@ function getSyllabusLink(code:string, specifier:string | undefined | null):strin
 	//necessary because cambridge typo'd the syllabus for german
 }
 
+type FunctionProps<T,
+	_TKeys extends keyof T = keyof T
+> = _TKeys extends unknown ? (
+	T[_TKeys] extends Function ? _TKeys : never
+) : never;
+
+function timeFunction<TObj extends Record<string, unknown>>(obj:TObj, key:FunctionProps<TObj>){
+	const desc = Object.getOwnPropertyDescriptor(obj, key);
+	if(!desc) throw new Error(`Property ${String(key)} does not exist in object ${obj}`);
+	if(!desc.writable) throw new Error(`Property ${String(key)} is not writeable`);
+	const value:any = obj[key];
+	obj[key] = function(...args:any[]){
+		console.time(String(key));
+		const output = value(...args);
+		console.timeEnd(String(key));
+		return output;
+	} as any;
+}
 
 /** Gets an HTML element of a particular type. */
 function getElement<T extends typeof Element>(selector:string, type:T):T["prototype"] {
@@ -732,6 +750,8 @@ function addListeners(){
 	});
 
 };
+
+timeFunction(window, "getPaporFromInput");
 
 addListeners();
 openedPapers.load();

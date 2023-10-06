@@ -172,6 +172,20 @@ function getSyllabusLink(code, specifier) {
     return fragment.startsWith("https://") ? fragment : `https://www.cambridgeinternational.org/Images/${fragment}-syllabus.pdf`;
     //necessary because cambridge typo'd the syllabus for german
 }
+function timeFunction(obj, key) {
+    const desc = Object.getOwnPropertyDescriptor(obj, key);
+    if (!desc)
+        throw new Error(`Property ${String(key)} does not exist in object ${obj}`);
+    if (!desc.writable)
+        throw new Error(`Property ${String(key)} is not writeable`);
+    const value = obj[key];
+    obj[key] = function (...args) {
+        console.time(String(key));
+        const output = value(...args);
+        console.timeEnd(String(key));
+        return output;
+    };
+}
 /** Gets an HTML element of a particular type. */
 function getElement(selector, type) {
     const elements = Array.from(document.querySelectorAll(selector))
@@ -786,5 +800,6 @@ function addListeners() {
     });
 }
 ;
+timeFunction(window, "getPaporFromInput");
 addListeners();
 openedPapers.load();
