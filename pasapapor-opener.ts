@@ -403,7 +403,6 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 	const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
 	if(componentCodeMatch){
 		[, componentCode] = componentCodeMatch;
-		componentCodeMatch.
 		input = removeMatch(input, componentCodeMatch, "@");
 		console.log(`Found component code: "${componentCodeMatch[0]}"`);
 	} else console.log(`Unable to find component code`);

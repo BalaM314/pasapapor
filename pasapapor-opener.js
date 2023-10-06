@@ -416,8 +416,7 @@ function smartParseInput(input, level) {
     const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
     if (componentCodeMatch) {
         [, componentCode] = componentCodeMatch;
-        componentCodeMatch.
-            input = removeMatch(input, componentCodeMatch, "@");
+        input = removeMatch(input, componentCodeMatch, "@");
         console.log(`Found component code: "${componentCodeMatch[0]}"`);
     }
     else
