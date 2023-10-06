@@ -197,7 +197,7 @@ type FunctionProps<T,
 	T[_TKeys] extends Function ? _TKeys : never
 ) : never;
 
-function timeFunction<TObj extends Record<string, unknown>>(obj:TObj, key:FunctionProps<TObj>){
+function timeFunction<TObj extends Record<string, unknown> | Window>(obj:TObj, key:FunctionProps<TObj>){
 	const desc = Object.getOwnPropertyDescriptor(obj, key);
 	if(!desc) throw new Error(`Property ${String(key)} does not exist in object ${obj}`);
 	if(!desc.writable) throw new Error(`Property ${String(key)} is not writeable`);
