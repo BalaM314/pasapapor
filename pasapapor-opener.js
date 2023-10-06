@@ -371,7 +371,7 @@ function smartParseInput(input, level) {
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
-    const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
+    const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)[^a-z0-9]*(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
     //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
     //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
     //Negative lookahead used to match s209701 but not s9702
