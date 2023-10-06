@@ -676,6 +676,9 @@ function addListeners(){
 	window.addEventListener("keydown", e => {
 		if(e.key == ";" && e.ctrlKey){
 			pasapaporInput.value = "!$*&U!%# further maths wt5y5hwinter 2022questionpaper22";
+		} else if(e.key == "Enter" && e.target == document.body) {
+			//If enter pressed on nothing
+			pasapaporInput.select();
 		}
 	});
 

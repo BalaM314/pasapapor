@@ -724,6 +724,10 @@ function addListeners() {
         if (e.key == ";" && e.ctrlKey) {
             pasapaporInput.value = "!$*&U!%# further maths wt5y5hwinter 2022questionpaper22";
         }
+        else if (e.key == "Enter" && e.target == document.body) {
+            //If enter pressed on nothing
+            pasapaporInput.select();
+        }
     });
     //When the selected level is changed
     buttonAsa.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.A_LEVELS));
