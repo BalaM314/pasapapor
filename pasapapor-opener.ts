@@ -564,11 +564,11 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 		console.log(`Input matched pattern: otherdocument`);
 		return [otherDocuments[cleanedInput]];
 	}
-	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*([a-z]{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
-	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
-	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(gt|er)[ \-_\/]*$/);
-	const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*([a-z]{2})?[ \-_\/]*$/);
-	const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z ()0-9]+?)[ \-_\/]+(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
+	const regularMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z][a-z ()0-9]*?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*([a-z]{2})[ \-_\/]*?(\d\d)[ \-_\/]*$/);
+	const typeOmittedMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z][a-z ()0-9]*?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(\d\d)[ \-_\/]*$/);
+	const codelessMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z][a-z ()0-9]*?)[ \-_\/]*([a-z]\d{1,4})[ \-_\/]*(gt|er)[ \-_\/]*$/);
+	const alternateMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z][a-z ()0-9]*?)[ \-_\/]*(\d\d)[ \-_\/]*(?:(f[ \-_\/]*m)|(m[ \-_\/]*j)|(o[ \-_\/]*n))[ \-_\/]*(\d\d)[ \-_\/]*([a-z]{2})?[ \-_\/]*$/);
+	const syllabusMatchData = lowercaseInput.match(/^[ \-_\/]*(\d{4}|[a-z][a-z ()0-9]*?)[ \-_\/]+(?:s|syl|syll|syllab|syllabus)[ \-_\/]*(\d|\d\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)?$/);
 	let subjectID:string, season:string, type:string | undefined, code:string | undefined;
 	if(regularMatchData != null){
 		console.log(`Input matched pattern: regular`);
