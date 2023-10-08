@@ -1,5 +1,5 @@
 import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
-import { never, removeMatch, timeFunction } from "./funcs.js";
+import { never, replaceMatch, timeFunction } from "./funcs.js";
 import { Openable } from "./types.js";
 
 export function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
@@ -87,7 +87,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		else if(_year.length == 2) year = _year; //23 -> 23, no changes necessary
 		else if(_year.length == 4) year = _year.slice(2); //2023 -> 23
 		else never();
-		input = removeMatch(input, x00Match, "@");
+		input = replaceMatch(input, x00Match, "@");
 		console.log(`Found season and year: "${x00Match[0]}"`);
 	} else {
 		const xy00Match = input.match(/(f\/m|m\/j|o\/n)\/(\d\d)/);
@@ -98,7 +98,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 			else if(_season == "o/n") seasonChar = "w";
 			else never();
 			year = _year;
-			input = removeMatch(input, xy00Match, "@");
+			input = replaceMatch(input, xy00Match, "@");
 			console.log(`Found season and year: "${xy00Match[0]}" -> ${seasonChar}${year}`);
 		} else console.log(`Unable to find season and year`);
 	}
@@ -107,7 +107,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	const syllabusMatch = input.match(/(?<![a-z])(s|syl|syll|syllabus)(?![a-z])/); //\b does not work because it thinks _ is a word
 	if(syllabusMatch){
 		syllabus = true;
-		input = removeMatch(input, syllabusMatch, "@");
+		input = replaceMatch(input, syllabusMatch, "@");
 		//Look for well-demarcated syllabus raw year specifier (only accepts hyphens to separate years)
 		const rawYearSpecifierMatch = input.match(/(?<=[ \-_\/]|^)(\d|20\d\d|\d\d-\d\d|20\d\d-20\d\d)(?=[ \-_\/]|$)/);
 		if(rawYearSpecifierMatch) [, syllabusRawYearSpecifier] = rawYearSpecifierMatch;
@@ -118,7 +118,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	const componentCodeMatch = input.match(/(?<!\d)(\d{2})(?!\d)/);
 	if(componentCodeMatch){
 		[, componentCode] = componentCodeMatch;
-		input = removeMatch(input, componentCodeMatch, "@");
+		input = replaceMatch(input, componentCodeMatch, "@");
 		console.log(`Found component code: "${componentCodeMatch[0]}"`);
 	} else console.log(`Unable to find component code`);
 
@@ -126,7 +126,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	const componentTypeMatch = input.match(/(?<![a-z])(ci|er|gt|ms|qp|in|sf|ir|pm)(?![a-z])/);
 	if(componentTypeMatch){
 		[, componentType] = componentTypeMatch;
-		input = removeMatch(input, componentTypeMatch, "@");
+		input = replaceMatch(input, componentTypeMatch, "@");
 		console.log(`Found component type: "${componentTypeMatch[0]}"`);
 	} else {
 		//Search for expanded component type
@@ -143,7 +143,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 				sf ? "sf" :
 				ir ? "ir" :
 				pm ? "pm" : never();
-			input = removeMatch(input, expandedComponentTypeMatch, "@");
+			input = replaceMatch(input, expandedComponentTypeMatch, "@");
 			console.log(`Found expanded component type: "${expandedComponentTypeMatch[0]}"`);
 		} else console.log(`Unable to find component type`);
 	}
@@ -152,7 +152,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	const subjectCodeMatch = input.match(/([0789]\d\d\d)/);
 	if(subjectCodeMatch){
 		[, subjectCode] = subjectCodeMatch;
-		input = removeMatch(input, subjectCodeMatch, "@");
+		input = replaceMatch(input, subjectCodeMatch, "@");
 		console.log(`Found subject code: "${subjectCodeMatch[0]}"`);
 	} else console.log(`Unable to find subject code`);
 
@@ -161,7 +161,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		const yearMatch = input.match(/20(\d\d)/);
 		if(yearMatch){
 			year = yearMatch[1];
-			input = removeMatch(input, yearMatch, "@");
+			input = replaceMatch(input, yearMatch, "@");
 			console.log(`Found year with looser search: "${yearMatch[0]}"`);
 		} else console.log(`Unable to find year with looser search`);
 		//Either any of the words, or any of the characters that do not have letters immediately before or after (that means we matched a random letter in a longer word)
@@ -170,7 +170,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 			const char = resolveSeasonChar(seasonMatch[0]);
 			if(char == null) never();
 			seasonChar = char;
-			input = removeMatch(input, seasonMatch, "@");
+			input = replaceMatch(input, seasonMatch, "@");
 			console.log(`Found season with looser search: "${seasonMatch[0]}"`);
 		} else console.log(`Unable to find season with looser search`);
 	}

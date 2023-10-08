@@ -58,6 +58,6 @@ export function firstUsePopup(key, message, callback, runCallbackAfterMessage = 
     }
 }
 export function never() { throw new Error("code failed"); }
-export function removeMatch(string, match, replacement = "") {
+export function replaceMatch(string, match, replacement = "") {
     return string.slice(0, match.index) + replacement + string.slice(match.index + match[0].length);
 }

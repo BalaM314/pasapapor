@@ -58,6 +58,6 @@ export function firstUsePopup(key:string, message:string, callback?:() => unknow
 
 export function never():never {throw new Error("code failed");}
 
-export function removeMatch(string:string, match:RegExpMatchArray, replacement = ""){
+export function replaceMatch(string:string, match:RegExpMatchArray, replacement = ""){
 	return string.slice(0, match.index!) + replacement + string.slice(match.index! + match[0].length);
 }
