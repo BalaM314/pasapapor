@@ -1,5 +1,6 @@
-"use strict";
-function isTypeValid(subjectID, type, code) {
+import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
+import { never, removeMatch, timeFunction } from "./funcs.js";
+export function isTypeValid(subjectID, type, code) {
     switch (type) {
         case "qp":
         case "ms": return true; //QP and MS exist for all subjects in almost all codes
@@ -20,7 +21,7 @@ function isTypeValid(subjectID, type, code) {
         default: return true;
     }
 }
-function resolveSeasonChar(seasonString) {
+export function resolveSeasonChar(seasonString) {
     switch (seasonString) {
         case "spring":
         case "feb":
@@ -48,7 +49,7 @@ function resolveSeasonChar(seasonString) {
         default: return null;
     }
 }
-function smartParseInput(input, level) {
+export function smartParseInput(input, level) {
     //List of things that the input could mean:
     //Document such as mf19 or chem db
     //Syllabus
@@ -297,7 +298,7 @@ function smartParseInput(input, level) {
         }
     }
 }
-function getPaporFromInput(input, level) {
+export const getPaporFromInput = timeFunction(function getPaporFromInput(input, level) {
     var _a;
     console.log(`Parsing input: <<${input}>>`);
     let lowercaseInput = input.toLowerCase();
@@ -368,9 +369,9 @@ function getPaporFromInput(input, level) {
     else {
         return [new Papor(subjectID, season, type, code)];
     }
-}
+});
 /** Represents a pasapapor. */
-class Papor {
+export class Papor {
     constructor(subjectID, season, type, code) {
         var _a;
         this.subjectID = subjectID;
@@ -407,7 +408,7 @@ class Papor {
             return null;
     }
 }
-function getSyllabusLink(code, specifier) {
+export function getSyllabusLink(code, specifier) {
     if (!(code in syllabusData))
         throw new Error(`Syllabus unknown for subject id ${code}`);
     const fragments = syllabusData[code];
@@ -429,13 +430,13 @@ function getSyllabusLink(code, specifier) {
     //necessary because cambridge typo'd the syllabus for german
 }
 /** Guesses a subject based on input. */
-function guessData(name, level) {
+export function guessData(name, level) {
     return Object.entries(subjectMapping)
         .filter(([id, data]) => (level == null || data.level == level) &&
         data.name.toLowerCase().replaceAll(/[()\-&]/g, "").replaceAll(/ +/g, " ").includes(name.toLowerCase()));
 }
 /** Validates a season, correcting it if it is "f22" or "w9". */
-function validateSeason(season) {
+export function validateSeason(season) {
     const matchData = season.match(/^([a-z])(\d{1}|\d{2}|\d{4})$/i);
     if (matchData == null)
         return null;
@@ -471,7 +472,7 @@ function validateSeason(season) {
     return processedSeason + processedYear;
 }
 /** Gets the subject id from entered string name. Throws if too many or no results. */
-function getIDFromName(name, level) {
+export function getIDFromName(name, level) {
     if (level == null) {
         const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
         const igcseGuess = shorthandSubjectNames[Level.IGCSE][name.toLowerCase()];

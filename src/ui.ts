@@ -1,3 +1,6 @@
+import { Level } from "./data.js";
+import { firstUsePopup, getElement, never } from "./funcs.js";
+import { getPaporFromInput } from "./papor.js";
 
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
@@ -29,7 +32,7 @@ function setTheme(theme: "light" | "dark"){
 	themeIcon.innerText = `${theme}_mode`;
 }
 
-function addListeners(){
+export function addListeners(){
 	const firstLoad = localStorage.getItem("pasapapor-first-load") === null;
 	localStorage.setItem("pasapapor-first-load", "false");
 
@@ -143,9 +146,6 @@ function addListeners(){
 	// 	hoverInfo.style.color = "unset";
 	// 	hoverInfo.innerText = `Hover for more information`;
 	// }));
-	window.addEventListener("beforeunload", () => {
-		openedPapers.save();
-	});
 	switch(localStorage.getItem("theme")){
 		case "dark":
 			setTheme("dark");

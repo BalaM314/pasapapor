@@ -1,3 +1,4 @@
+import { addListeners } from "./ui.js";
 
 const openedPapers = {
 	lsKey: "pasapapor-openedpapers",
@@ -38,7 +39,10 @@ const openedPapers = {
 	}
 };
 
-timeFunction(window, "getPaporFromInput");
+window.addEventListener("beforeunload", () => {
+	openedPapers.save();
+});
+
 openedPapers.load();
 
 addListeners();

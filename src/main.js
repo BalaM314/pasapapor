@@ -1,4 +1,4 @@
-"use strict";
+import { addListeners } from "./ui.js";
 const openedPapers = {
     lsKey: "pasapapor-openedpapers",
     storage: {},
@@ -41,7 +41,9 @@ const openedPapers = {
         }));
     }
 };
-timeFunction(window, "getPaporFromInput");
+window.addEventListener("beforeunload", () => {
+    openedPapers.save();
+});
 openedPapers.load();
 addListeners();
 console.log(`%c<Pasapapor>`, "font-weight: bold; font-size: 150%; color: yellowgreen");

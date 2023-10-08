@@ -1,5 +1,8 @@
+import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
+import { never, removeMatch, timeFunction } from "./funcs.js";
+import { Openable } from "./types.js";
 
-function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
+export function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
 	switch(type){
 		case "qp": case "ms": return true; //QP and MS exist for all subjects in almost all codes
 		case "er": case "gt": return code == undefined; //ER is for every component
@@ -22,7 +25,7 @@ function isTypeValid(subjectID:string, type:string, code:string | undefined):boo
 	}
 }
 
-function resolveSeasonChar(seasonString:string):'m' | 's' | 'w' | null {
+export function resolveSeasonChar(seasonString:string):'m' | 's' | 'w' | null {
 	switch(seasonString){
 		case "spring": case "feb": case "march": case "mar": case "m": case "f":
 			return "m";
@@ -34,7 +37,7 @@ function resolveSeasonChar(seasonString:string):'m' | 's' | 'w' | null {
 	}
 }
 
-function smartParseInput(input:string, level:Level | null):Openable[] {
+export function smartParseInput(input:string, level:Level | null):Openable[] {
 	//List of things that the input could mean:
 	//Document such as mf19 or chem db
 	//Syllabus
@@ -267,7 +270,7 @@ function smartParseInput(input:string, level:Level | null):Openable[] {
 
 }
 
-function getPaporFromInput(input:string, level:Level | null):Openable[] {
+export const getPaporFromInput = timeFunction(function getPaporFromInput(input:string, level:Level | null):Openable[] {
 
 	console.log(`Parsing input: <<${input}>>`);
 	let lowercaseInput = input.toLowerCase();
@@ -326,10 +329,10 @@ function getPaporFromInput(input:string, level:Level | null):Openable[] {
 	} else {
 		return [new Papor(subjectID, season, type, code)];
 	}
-}
+});
 
 /** Represents a pasapapor. */
-class Papor implements Openable {
+export class Papor implements Openable {
 	year: string;
 	name: string;
 	level: Level;
@@ -363,7 +366,7 @@ class Papor implements Openable {
 }
 
 
-function getSyllabusLink(code:string, specifier:string | undefined | null):string {	
+export function getSyllabusLink(code:string, specifier:string | undefined | null):string {	
 	if(!(code in syllabusData)) throw new Error(`Syllabus unknown for subject id ${code}`);
 	const fragments = syllabusData[code];
 	let fragment;
@@ -380,7 +383,7 @@ function getSyllabusLink(code:string, specifier:string | undefined | null):strin
 
 
 /** Guesses a subject based on input. */
-function guessData(name:string, level:Level | null):[string, SubjectData][] {
+export function guessData(name:string, level:Level | null):[string, SubjectData][] {
 	return Object.entries(subjectMapping)
 		.filter(
 			([id, data]) =>
@@ -390,7 +393,7 @@ function guessData(name:string, level:Level | null):[string, SubjectData][] {
 }
 
 /** Validates a season, correcting it if it is "f22" or "w9". */
-function validateSeason(season:string):string | null {
+export function validateSeason(season:string):string | null {
 	const matchData = season.match(/^([a-z])(\d{1}|\d{2}|\d{4})$/i);
 	if(matchData == null) return null;
 	let [, seasonChar, year] = matchData;
@@ -417,7 +420,7 @@ function validateSeason(season:string):string | null {
 }
 
 /** Gets the subject id from entered string name. Throws if too many or no results. */
-function getIDFromName(name:string, level:Level | null):string {
+export function getIDFromName(name:string, level:Level | null):string {
 	if(level == null){
 		const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
 		const igcseGuess = shorthandSubjectNames[Level.IGCSE][name.toLowerCase()];
