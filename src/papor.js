@@ -298,7 +298,7 @@ export function smartParseInput(input, level) {
         }
     }
 }
-export const getPaporFromInput = timeFunction(function getPaporFromInput(input, level) {
+export const getPaporFromInput = timeFunction(function getPaporFromInput(input, level, allowSmartParser = true) {
     var _a;
     console.log(`Parsing input: <<${input}>>`);
     let lowercaseInput = input.toLowerCase();
@@ -349,9 +349,12 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
             subjectID = getIDFromName(subjectID, level);
         return [{ url: () => getSyllabusLink(subjectID, specifier), cleanString: () => `${subjectID} syllabus` }];
     }
-    else {
+    else if (allowSmartParser) {
         console.log(`Input did not match any known patterns, triggering smart parser...`);
         return smartParseInput(input, level);
+    }
+    else {
+        throw new Error(`Improperly formatted input`);
     }
     season = (_a = validateSeason(season)) !== null && _a !== void 0 ? _a : (() => { throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`); })();
     if (isNaN(parseInt(subjectID)))
