@@ -225,8 +225,8 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	} else if(subjectCode != null && seasonChar != null && year != null && componentType == null && componentCode != null){
 		console.log(`Chunks matched pattern: typeOmitted`);
 		return [
-			new Papor(subjectCode, `${seasonChar}${year}`, "qp", componentCode),
 			new Papor(subjectCode, `${seasonChar}${year}`, "ms", componentCode),
+			new Papor(subjectCode, `${seasonChar}${year}`, "qp", componentCode),
 		];
 	} else if(subjectCode != null && seasonChar != null && year != null && (componentType == "er" || componentType == "gt") && componentCode == null){
 		console.log(`Chunks matched pattern: codeOmitted`);
