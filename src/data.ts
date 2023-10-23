@@ -64,7 +64,8 @@ export const shorthandSubjectNames = ((data:{
 		"0610": ["bio", "biology"],
 		"0455": ["eco", "economics"],
 		"0500": ["eng", "english", "el"],
-		"0606": ["meth", "add math", "addmath"]
+		"0606": ["meth", "add math", "addmath"],
+		"0680": ["evm", "env"],
 	},
 	[Level.A_LEVELS]: {
 		"9700": ["bio", "biology"],
@@ -77,5 +78,6 @@ export const shorthandSubjectNames = ((data:{
 		"9618": ["cs", "compsci"],
 		"9231": ["further math", "f math", "fmath", "math f", "mathf", "math further", "meth"],
 		"9990": ["psy", "psych", "psycho", "psychology"],
+		"8291": ["evm", "env"],
 	},
 });
