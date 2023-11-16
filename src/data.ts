@@ -57,9 +57,11 @@ export const shorthandSubjectNames = ((data:{
 	)
 ))({
 	[Level.IGCSE]: {
+		"0530": ["spanish"],
 		"0580": ["math", "mathematics"],
 		"0620": ["chem", "chemistry"],
 		"0625": ["phy", "phys", "physics"],
+		"0417": ["ict"],
 		"0478": ["cs", "compsci"],
 		"0610": ["bio", "biology"],
 		"0455": ["eco", "economics"],
