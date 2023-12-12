@@ -1,5 +1,5 @@
 import { addListeners } from "./ui.js";
-const openedPapers = {
+const openedPapors = {
     lsKey: "pasapapor-openedpapers",
     storage: {},
     load() {
@@ -42,9 +42,9 @@ const openedPapers = {
     }
 };
 window.addEventListener("beforeunload", () => {
-    openedPapers.save();
+    openedPapors.save();
 });
-openedPapers.load();
+openedPapors.load();
 addListeners();
 console.log(`%c<Pasapapor>`, "font-weight: bold; font-size: 150%; color: yellowgreen");
 console.log("%csource code available at https://github.com/BalaM314/pasapapor/", "font-size: 150%;");

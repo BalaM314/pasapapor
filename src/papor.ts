@@ -333,6 +333,25 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input:s
 	}
 });
 
+interface PaporProvider {
+	name:string;
+	site:string;
+	getURL(paper:Papor):string;
+}
+
+const providers = {
+	gceguide: {
+		name: "GCE Guide",
+		site: "https://papers.gceguide.com/",
+		getURL(papor){
+			const filetype = papor.type == "sf" ? "zip" : "pdf";
+		return papor.code != undefined ?
+			`https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
+			`https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+		}
+	}
+} satisfies Record<string, PaporProvider>;
+
 /** Represents a pasapapor. */
 export class Papor implements Openable {
 	year: string;
@@ -344,11 +363,8 @@ export class Papor implements Openable {
 		this.name = data.name;
 		this.level = data.level;
 	}
-	url(){
-		const filetype = this.type == "sf" ? "zip" : "pdf";
-		return this.code ?
-			`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}_${this.code}.${filetype}` : 
-			`https://papers.gceguide.com/${this.level}/${this.name}/${this.year}/${this.subjectID}_${this.season}_${this.type}.${filetype}`
+	url(provider:keyof typeof providers = "gceguide"){
+		return providers[provider].getURL(this);
 	}
 	toString(){
 		return `Papor{ ${this.subjectID}_${this.season}_${this.type}_${this.code} }`;

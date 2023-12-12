@@ -1,6 +1,6 @@
 import { addListeners } from "./ui.js";
 
-const openedPapers = {
+const openedPapors = {
 	lsKey: "pasapapor-openedpapers",
 	storage: {} as Record<string, {
 		status: "complete" | "partial";
@@ -40,10 +40,10 @@ const openedPapers = {
 };
 
 window.addEventListener("beforeunload", () => {
-	openedPapers.save();
+	openedPapors.save();
 });
 
-openedPapers.load();
+openedPapors.load();
 
 addListeners();
 console.log(`%c<Pasapapor>`, "font-weight: bold; font-size: 150%; color: yellowgreen");

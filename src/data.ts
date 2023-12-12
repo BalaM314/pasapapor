@@ -24,6 +24,7 @@ export enum Level {
 }
 
 //JSON.stringify(Object.fromEntries(Array.from(temp0.children).map(el => [el.innerText.match(/\((\d+)\)/)?.[1], el.innerText]).filter(([id, text]) => id != undefined)));
+//TODO fully cleanup: this is the GCEGuide name, we should use the rawsubjectdata name
 export const rawSubjectData: {
 	[L in Level]: [id:string, name:string][];
 } = {
