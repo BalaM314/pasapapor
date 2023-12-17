@@ -31,6 +31,7 @@ function setTheme(theme) {
     themeIcon.innerText = `${theme}_mode`;
 }
 export function addListeners() {
+    errorbox.innerText = "";
     const firstLoad = localStorage.getItem("pasapapor-first-load") === null;
     localStorage.setItem("pasapapor-first-load", "false");
     //When a key is pressed

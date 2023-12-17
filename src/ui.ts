@@ -31,6 +31,8 @@ function setTheme(theme:"light" | "dark"){
 }
 
 export function addListeners(){
+	errorbox.innerText = "";
+
 	const firstLoad = localStorage.getItem("pasapapor-first-load") === null;
 	localStorage.setItem("pasapapor-first-load", "false");
 
