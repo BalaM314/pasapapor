@@ -12,7 +12,7 @@ const header = getElement("#header", HTMLDivElement);
 const formatExplanation = getElement("#format-explanation", HTMLDivElement);
 const hoverInfo = getElement("#hover-info", HTMLDivElement);
 const infoHoverSpans = Array.from(formatExplanation.children);
-const themeButton = getElement("button.theme", HTMLButtonElement);
+const themeButton = getElement("#theme-button", HTMLButtonElement);
 const themeIcon = getElement("span.material-icons", HTMLSpanElement);
 function getSelectedLevel() {
     var _a;
@@ -26,14 +26,8 @@ function getSelectedLevel() {
 }
 function setTheme(theme) {
     localStorage.setItem("theme", theme);
-    if (theme == "light")
-        document.body.classList.add("lightTheme");
-    else
-        document.body.classList.remove("lightTheme");
-    if (theme == "dark")
-        document.body.classList.add("darkTheme");
-    else
-        document.body.classList.remove("darkTheme");
+    document.body.classList[theme == "light" ? "add" : "remove"]("lightTheme");
+    document.body.classList[theme == "dark" ? "add" : "remove"]("darkTheme");
     themeIcon.innerText = `${theme}_mode`;
 }
 export function addListeners() {
