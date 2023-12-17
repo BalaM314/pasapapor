@@ -1,5 +1,5 @@
 import { Level } from "./data.js";
-import { firstUsePopup, getElement, never } from "./funcs.js";
+import { escapeHTML, firstUsePopup, getElement, never } from "./funcs.js";
 import { getPaporFromInput } from "./papor.js";
 
 //HTML elements
@@ -61,7 +61,7 @@ export function addListeners(){
 								papors.forEach(papor => window.open(papor.url(), "_blank"));
 							}, true);
 						}
-						errorbox.innerText = `✔ Opened: ${papors.map(papor => papor.cleanString()).join(", ")}`;
+						errorbox.innerHTML = `✔ Opened: ${papors.map(papor => `<a href="${papor.url()}">${escapeHTML(papor.cleanString())}</a>`).join(", ")}`;
 						break;
 				}
 			} catch(err){

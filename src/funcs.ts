@@ -61,3 +61,7 @@ export function never():never {throw new Error("code failed");}
 export function replaceMatch(string:string, match:RegExpMatchArray, replacement = ""){
 	return string.slice(0, match.index!) + replacement + string.slice(match.index! + match[0].length);
 }
+
+export function escapeHTML(input:string):string {
+	return input.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(`"`, "&quot;").replaceAll(`'`, "&apos;");
+}
