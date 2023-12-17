@@ -41,7 +41,7 @@ export function addListeners() {
         if (e.key == "Enter") {
             //If it's enter, open papors
             try {
-                errorbox.style.color = "var(--success-color)";
+                errorbox.className = "success";
                 errorbox.innerText = "";
                 if (pasapaporInput.value.includes("amogus"))
                     throw new Error("Too sus.");
@@ -78,7 +78,7 @@ export function addListeners() {
                     }
             }
             catch (err) {
-                errorbox.style.color = "var(--error-color)";
+                errorbox.className = "error";
                 errorbox.innerText = `❗ ${err.message}`;
             }
         }
@@ -86,6 +86,7 @@ export function addListeners() {
     window.addEventListener("keydown", e => {
         if (e.key == ";" && e.ctrlKey) {
             pasapaporInput.value = "!$*&U!%# further maths wt5y5hwinter 2022questionpaper22";
+            buttonAsa.click();
         }
         else if (e.key == "Enter" && e.target == document.body) {
             //If enter pressed on nothing

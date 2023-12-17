@@ -216,8 +216,11 @@ body {
 }
 
 
-#errorbox {
+#errorbox.error, #errorbox.error a {
 	color: var(--error-color);
+}
+#errorbox.success, #errorbox.success a {
+	color: var(--success-color);
 }
 
 #format-explanation span {
