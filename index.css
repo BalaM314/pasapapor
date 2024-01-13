@@ -162,7 +162,7 @@ body {
 	height: 50px;
 	display: block;
 	transition: box-shadow 400ms ease;
-	/* clip-path: circle(24px at 25px 26px) */
+	border-radius: 100%;
 }
 .darkTheme #github-icon {
 	filter: invert();
