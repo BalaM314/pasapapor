@@ -1,6 +1,6 @@
 import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
 import { never, replaceMatch, timeFunction } from "./funcs.js";
-import { Openable } from "./types.js";
+import { Openable, SubjectData } from "./types.js";
 
 export function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
 	switch(type){
@@ -349,7 +349,17 @@ const providers = {
 			`https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
 			`https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
 		}
-	}
+	},
+	xtremepapers: {
+		name: "Xtreme Papers",
+		site: "https://papers.xtremepape.rs/",
+		getURL(papor){
+			const filetype = papor.type == "sf" ? "zip" : "pdf";
+		return papor.code != undefined ?
+			`https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
+			`https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+		}
+	},
 } satisfies Record<string, PaporProvider>;
 
 /** Represents a pasapapor. */

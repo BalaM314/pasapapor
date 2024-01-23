@@ -383,7 +383,17 @@ const providers = {
                 `https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
                 `https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
         }
-    }
+    },
+    xtremepapers: {
+        name: "Xtreme Papers",
+        site: "https://papers.xtremepape.rs/",
+        getURL(papor) {
+            const filetype = papor.type == "sf" ? "zip" : "pdf";
+            return papor.code != undefined ?
+                `https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
+                `https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+        }
+    },
 };
 /** Represents a pasapapor. */
 export class Papor {
