@@ -408,7 +408,7 @@ export class Papor {
         this.name = data.name;
         this.level = data.level;
     }
-    url(provider = "gceguide") {
+    url(provider = "xtremepapers") {
         return providers[provider].getURL(this);
     }
     toString() {
