@@ -97,7 +97,7 @@ export function addListeners(){
 	let clickTimes = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	headerText.addEventListener("click", e => {
 		clickTimes.shift();
-        clickTimes.push(Date.now());
+		clickTimes.push(Date.now());
 		if(e.shiftKey) flashing = !flashing;
 		if(e.altKey) bouncing = !bouncing;
 		if(e.ctrlKey) flipped = !flipped;

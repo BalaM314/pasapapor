@@ -7,21 +7,21 @@ const data = [["8021","as-and-a-level-general-paper-as-level-only-8021"],["8022"
 
 //Scrape syllabus info
 async function scrapeUrl(url){
-    const syllabi = (await (await fetch(url)).text()).match(/<a href="\/Images\/(\d{6}-20\d{2}(?:-20\d{2})?)-syllabus.pdf"/g);
-    if(!syllabi){
-        console.error(`No syllabi found for url ${url}`);
-        return [];
-    }
-    return syllabi.map(r => /<a href="\/Images\/(\d{6}-20\d{2}(?:-20\d{2})?)-syllabus.pdf"/.exec(r)[1])
+	const syllabi = (await (await fetch(url)).text()).match(/<a href="\/Images\/(\d{6}-20\d{2}(?:-20\d{2})?)-syllabus.pdf"/g);
+	if(!syllabi){
+		console.error(`No syllabi found for url ${url}`);
+		return [];
+	}
+	return syllabi.map(r => /<a href="\/Images\/(\d{6}-20\d{2}(?:-20\d{2})?)-syllabus.pdf"/.exec(r)[1])
 } 
 async function scraper(){
-    const out = {};
-    for(const [code, urlFragment] of data){
-        const url = `https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-${urlFragment}/`;
-        console.log("Scraping " + url);
-        out[code] = await scrapeUrl(url);
-    }
-    return out;
+	const out = {};
+	for(const [code, urlFragment] of data){
+		const url = `https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-international-${urlFragment}/`;
+		console.log("Scraping " + url);
+		out[code] = await scrapeUrl(url);
+	}
+	return out;
 }
 //syllabus url: `https://www.cambridgeinternational.org/Images/${fragment}-syllabus.pdf`
 data:
