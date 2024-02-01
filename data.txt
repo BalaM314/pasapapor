@@ -13,7 +13,7 @@ async function scrapeUrl(url){
 		return [];
 	}
 	return syllabi.map(r => /<a href="\/Images\/(\d{6}-20\d{2}(?:-20\d{2})?)-syllabus.pdf"/.exec(r)[1])
-} 
+}
 async function scraper(){
 	const out = {};
 	for(const [code, urlFragment] of data){

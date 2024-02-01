@@ -373,7 +373,7 @@ export class Papor implements Openable {
 		this.name = data.name;
 		this.level = data.level;
 	}
-	url(provider:keyof typeof providers = "xtremepapers"){
+	url(provider:keyof typeof providers = "gceguide"){
 		return providers[provider].getURL(this);
 	}
 	toString(){
