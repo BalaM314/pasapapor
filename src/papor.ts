@@ -339,7 +339,7 @@ interface PaporProvider {
 	getURL(paper:Papor):string;
 }
 
-const providers = {
+export const providers = {
 	gceguide: {
 		name: "GCE Guide",
 		site: "https://papers.gceguide.com/",

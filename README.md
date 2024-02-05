@@ -12,6 +12,7 @@ Features:
 * grade thresholds / examiner reports
 * mf19, mf9, mf10, mf20, mf26
 * chemistry data booklet
+* Currently supports GCEguide and xtremepapers as sources
 
 Parser features:
 * Supports using subject name instead of code, disambiguates based on the selected level

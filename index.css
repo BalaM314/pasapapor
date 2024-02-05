@@ -17,6 +17,8 @@
 	--header-color: rgb(29, 114, 0);
 	--igcse: #ea5a0b;
 	--as-a: #e11950;
+	--source-gceguide: #ea5a0b;
+	--source-xtremepapers: #e11950;
 	--accent-border-color: dimgray;
 }
 
@@ -32,6 +34,8 @@
 	--header-color: yellowgreen;
 	--igcse: #fcc3a5;
 	--as-a: #efa4b9;
+	--source-gceguide: #fcc3a5;
+	--source-xtremepapers: #efa4b9;
 	--accent-border-color: white;
 }
 
@@ -60,6 +64,7 @@ body {
 	justify-content: space-between;
 }
 
+/* TODO replace all these media queries with ".phone" */
 @media screen and (max-width: 600px) {
 	#content {
 		margin: 0;
@@ -93,7 +98,7 @@ body {
 }
 @media screen and (max-width: 600px) {
 	#interface {
-		grid-template-columns: 1fr;
+		grid-template-columns: 1fr 1fr;
 	}
 }
 
@@ -106,11 +111,22 @@ body {
 @media screen and (max-width: 600px) {	
 	#pasapapor-select {
 		margin: 10px 0;
+		grid-area: 2 / 1 / 2 / span 2;
 	}
 }
 
-#level-select {
+.radio-container {
 	margin-top: 20px;
+}
+
+#source-select {
+	text-align: right;
+}
+
+@media screen and (max-width: 600px) {
+	#source-select {
+		grid-area: 1 / 2;
+	}
 }
 
 #errorbox {
@@ -118,7 +134,7 @@ body {
 }
 @media screen and (max-width: 600px) {
 	#errorbox {
-		grid-area: auto;
+		grid-area: 3 / 1 / 3 / span 2;
 	}
 }
 
@@ -204,13 +220,13 @@ body {
 	border: 5px ridge var(--accent-border-color);
 }
 
-#level-select {
+.radio-container {
 	font-size: 150%;
 }
-#level-select label {
+.radio-container label {
 	font-weight: bold;
 }
-#level-select input[type="radio"] {
+.radio-container input[type="radio"] {
 	/* Make the radio buttons a bit bigger */
 	transform: translateY(-5px) scale(1.5);
 }

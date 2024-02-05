@@ -1,12 +1,15 @@
 import { Level } from "./data.js";
 import { escapeHTML, firstUsePopup, getElement, never } from "./funcs.js";
-import { getPaporFromInput } from "./papor.js";
+import { Papor, getPaporFromInput, providers } from "./papor.js";
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
 const levelSelectDiv = getElement("#level-select", HTMLDivElement);
+const sourceSelectDiv = getElement("#source-select", HTMLDivElement);
 const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
-const errorbox = getElement("#errorbox", HTMLDivElement);
+const buttonSourceGce = getElement("input#source-gceguide", HTMLInputElement);
+const buttonSourceXtr = getElement("input#source-xtremepapers", HTMLInputElement);
+const errorbox = getElement("#errorbox", HTMLDivElement); //TODO rename to output box
 const headerText = getElement("#header-text", HTMLSpanElement);
 const header = getElement("#header", HTMLDivElement);
 const formatExplanation = getElement("#format-explanation", HTMLDivElement);
@@ -14,7 +17,7 @@ const hoverInfo = getElement("#hover-info", HTMLDivElement);
 const infoHoverSpans = Array.from(formatExplanation.children);
 const themeButton = getElement("#theme-button", HTMLButtonElement);
 const themeIcon = getElement("span.material-icons", HTMLSpanElement);
-function getSelectedLevel() {
+export function getSelectedLevel() {
     var _a;
     const value = (_a = Array.from(levelSelectDiv.children).filter((el) => el instanceof HTMLInputElement && el.checked)[0]) === null || _a === void 0 ? void 0 : _a.value;
     if (value == "igcse")
@@ -24,11 +27,26 @@ function getSelectedLevel() {
     else
         return null;
 }
-function setTheme(theme) {
+export function getSelectedSource(def = null) {
+    var _a;
+    const value = (_a = Array.from(sourceSelectDiv.children).filter((el) => el instanceof HTMLInputElement && el.checked)[0]) === null || _a === void 0 ? void 0 : _a.value;
+    console.log(value);
+    if ((Object.keys(providers)).includes(value))
+        return value;
+    else
+        return def;
+}
+export function setTheme(theme) {
     localStorage.setItem("theme", theme);
     document.body.classList[theme == "light" ? "add" : "remove"]("lightTheme");
     document.body.classList[theme == "dark" ? "add" : "remove"]("darkTheme");
     themeIcon.innerText = `${theme}_mode`;
+}
+export function getURL(input) {
+    if (input instanceof Papor)
+        return input.url(getSelectedSource("gceguide"));
+    else
+        return input.url();
 }
 export function addListeners() {
     errorbox.innerText = "";
@@ -67,13 +85,13 @@ export function addListeners() {
                         default:
                             const papors = getPaporFromInput(pasapaporInput.value, getSelectedLevel());
                             if (papors.length == 1)
-                                window.open(papors[0].url(), "_blank");
+                                window.open(getURL(papors[0]), "_blank");
                             else {
                                 firstUsePopup("allow-popups", `You're trying to open multiple papers at once, but browsers will block this by default to prevent spam.\nInstructions to allow popups: Check the URL bar (left side or right side) for an icon or message that says "Popup blocked", then click it and select "Always allow popups and redirects from..."`, () => {
-                                    papors.forEach(papor => window.open(papor.url(), "_blank"));
+                                    papors.forEach(papor => window.open(getURL(papor), "_blank"));
                                 }, true);
                             }
-                            errorbox.innerHTML = `✔ Opened: ${papors.map(papor => `<a href="${papor.url()}">${escapeHTML(papor.cleanString())}</a>`).join(", ")}`;
+                            errorbox.innerHTML = `✔ Opened: ${papors.map(papor => `<a href="${getURL(papor)}">${escapeHTML(papor.cleanString())}</a>`).join(", ")}`;
                             break;
                     }
             }
@@ -96,6 +114,8 @@ export function addListeners() {
     //When the selected level is changed
     buttonAsa.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.A_LEVELS));
     buttonIgcse.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.IGCSE));
+    buttonSourceGce.addEventListener("change", () => localStorage.setItem("pasapapor-source", "gceguide"));
+    buttonSourceXtr.addEventListener("change", () => localStorage.setItem("pasapapor-source", "xtremepapers"));
     //Load saved level
     switch (localStorage.getItem("pasapapor-level")) {
         case Level.A_LEVELS:
@@ -104,6 +124,14 @@ export function addListeners() {
         case Level.IGCSE:
             buttonIgcse.click();
             break;
+    }
+    const savedSource = localStorage.getItem("pasapapor-source");
+    if (savedSource != null && savedSource in providers) {
+        //TODO fix this... proper config system...
+        if (savedSource == "gceguide")
+            buttonSourceGce.click();
+        else if (savedSource == "xtremepapers")
+            buttonSourceXtr.click();
     }
     let flashing = false;
     let bouncing = false;

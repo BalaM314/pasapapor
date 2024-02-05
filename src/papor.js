@@ -373,7 +373,7 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
         return [new Papor(subjectID, season, type, code)];
     }
 });
-const providers = {
+export const providers = {
     gceguide: {
         name: "GCE Guide",
         site: "https://papers.gceguide.com/",
