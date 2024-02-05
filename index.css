@@ -310,6 +310,20 @@ a:active {
 	align-items: center;
 }
 
+.small-text {
+	font-size: 70%;
+	color: color-mix(in srgb, var(--text-color) 70%, transparent);
+}
+.small-text a {
+	color: color-mix(in srgb, #00C400 70%, transparent);
+}
+.small-text a:hover {
+	color: color-mix(in srgb, #00EC00 70%, transparent);
+}
+.small-text a:active {
+	color: color-mix(in srgb, #0F0 70%, transparent);
+}
+
 @keyframes sizebounce {
 	0% {
 		transform: scale(1.0);
