@@ -17,8 +17,8 @@ export function timeFunction(arg1:unknown, arg2?:unknown){
 		const obj:any = arg1;
 		const key:any = arg2;
 		const desc = Object.getOwnPropertyDescriptor(obj, key);
-		if(!desc) throw new Error(`Property ${String(key)} does not exist in object ${obj}`);
-		if(!desc.writable) throw new Error(`Property ${String(key)} is not writeable`);
+		if(!desc) fail(`Property ${String(key)} does not exist in object ${obj}`);
+		if(!desc.writable) fail(`Property ${String(key)} is not writable`);
 		const value:any = obj[key];
 		obj[key] = function(...args:any[]){
 			console.time(String(key));
@@ -34,9 +34,9 @@ export function getElement<T extends typeof Element>(selector:string, type:T):T[
 	const elements = Array.from(document.querySelectorAll(selector))
 		.filter((e):e is T["prototype"] => e instanceof type);
 	if(elements[0]) return elements[0];
-	if(document.querySelectorAll(selector).length > 1) throw new Error(`No elements matching ${selector} were of type ${type.name}`);
-	else if(document.querySelector(selector)) throw new Error(`Element matching ${selector} was of type ${document.querySelector(selector)!.constructor.name}, not ${type.name}`);
-	else throw new Error(`No elements matched selector ${selector}`);
+	if(document.querySelectorAll(selector).length > 1) fail(`No elements matching ${selector} were of type ${type.name}`);
+	else if(document.querySelector(selector)) fail(`Element matching ${selector} was of type ${document.querySelector(selector)!.constructor.name}, not ${type.name}`);
+	else fail(`No elements matched selector ${selector}`);
 }
 
 /**
@@ -56,7 +56,12 @@ export function firstUsePopup(key:string, message:string, callback?:() => unknow
 	}
 }
 
-export function never():never {throw new Error("code failed");}
+export function impossible():never {
+	throw new Error("Unreachable code was reached!");
+}
+export function fail(message:string):never {
+	throw new Error(message);
+}
 
 export function replaceMatch(string:string, match:RegExpMatchArray, replacement = ""){
 	return string.slice(0, match.index!) + replacement + string.slice(match.index! + match[0].length);

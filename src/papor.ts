@@ -1,5 +1,5 @@
 import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
-import { never, replaceMatch, timeFunction } from "./funcs.js";
+import { impossible, replaceMatch, timeFunction, fail } from "./funcs.js";
 import { Openable, SubjectData } from "./types.js";
 
 export function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
@@ -81,12 +81,12 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		const [, _season, _year] = x00Match;
 		const char = resolveSeasonChar(_season);
 		if(char) seasonChar = char;
-		else never();
+		else impossible();
 		//Set the year
 		if(_year.length == 1) year = "0" + _year; //9 -> 09
 		else if(_year.length == 2) year = _year; //23 -> 23, no changes necessary
 		else if(_year.length == 4) year = _year.slice(2); //2023 -> 23
-		else never();
+		else impossible();
 		input = replaceMatch(input, x00Match, "@");
 		console.log(`Found season and year: "${x00Match[0]}"`);
 	} else {
@@ -96,7 +96,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 			if(_season == "f/m") seasonChar = "m";
 			else if(_season == "m/j") seasonChar = "s";
 			else if(_season == "o/n") seasonChar = "w";
-			else never();
+			else impossible();
 			year = _year;
 			input = replaceMatch(input, xy00Match, "@");
 			console.log(`Found season and year: "${xy00Match[0]}" -> ${seasonChar}${year}`);
@@ -142,7 +142,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 				_in ? "in" :
 				sf ? "sf" :
 				ir ? "ir" :
-				pm ? "pm" : never();
+				pm ? "pm" : impossible();
 			input = replaceMatch(input, expandedComponentTypeMatch, "@");
 			console.log(`Found expanded component type: "${expandedComponentTypeMatch[0]}"`);
 		} else console.log(`Unable to find component type`);
@@ -168,7 +168,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		const seasonMatch = input.match(/(spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)|((?<![a-z])[fmsjwon](?![a-z]))/);
 		if(seasonMatch){
 			const char = resolveSeasonChar(seasonMatch[0]);
-			if(char == null) never();
+			if(char == null) impossible();
 			seasonChar = char;
 			input = replaceMatch(input, seasonMatch, "@");
 			console.log(`Found season with looser search: "${seasonMatch[0]}"`);
@@ -219,7 +219,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 
 	if(subjectCode != null && seasonChar != null && year != null && componentType != null && componentCode != null){
 		if(componentType && !isTypeValid(subjectCode, componentType, componentCode))
-			throw new Error(`Type ${componentType} is not a valid type for component ${subjectCode}/${componentCode}`);
+			fail(`Type ${componentType} is not a valid type for component ${subjectCode}/${componentCode}`);
 		console.log(`Chunks matched pattern: regular`);
 		return [new Papor(subjectCode, `${seasonChar}${year}`, componentType, componentCode)];
 	} else if(subjectCode != null && seasonChar != null && year != null && componentType == null && componentCode != null){
@@ -245,24 +245,24 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		//Syllabus requires a very minimal amount of info (subject and a phrase implying syllabus, such as "s" or "syl"), so do that last
 		console.log(`Chunks did not match any pattern, erroring`);
 		if(subjectCode != null && componentType != null && componentCode != null){ //missing season
-			throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${componentType} ${componentCode}). If you are, please specify the year and season, like this: (${subjectCode} s22 ${componentType} ${componentCode})`);
+			fail(`It looks like you're trying to open a paper (${subjectCode} ${componentType} ${componentCode}). If you are, please specify the year and season, like this: (${subjectCode} s22 ${componentType} ${componentCode})`);
 		} else if(subjectCode != null && seasonChar != null && year != null && componentType != null){ //missing component code
-			throw new Error(`It looks like you're trying to open a paper (${subjectCode} ${seasonChar}${year} ${componentType}). If you are, please specify the component code, like this: (${subjectCode} ${seasonChar}${year} ${componentType} 12). You can only omit the component code if you're trying to open something that doesnt have a code, such as the grade thresholds (${subjectCode} ${seasonChar}${year} gt) or the examiner report (${subjectCode} ${seasonChar}${year} er).`);
+			fail(`It looks like you're trying to open a paper (${subjectCode} ${seasonChar}${year} ${componentType}). If you are, please specify the component code, like this: (${subjectCode} ${seasonChar}${year} ${componentType} 12). You can only omit the component code if you're trying to open something that doesnt have a code, such as the grade thresholds (${subjectCode} ${seasonChar}${year} gt) or the examiner report (${subjectCode} ${seasonChar}${year} er).`);
 		} else if(subjectCode == null && (seasonChar != null || year != null || componentType != null || componentCode != null)){ //unknown subject, and at least one other thing
 			if(subjectErrorMessages.size == 1){
-				throw new Error(`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}), but Pasapapor was unable to determine the subject due to the following error:\n${subjectErrorMessages.values().next().value}`);
+				fail(`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}), but Pasapapor was unable to determine the subject due to the following error:\n${subjectErrorMessages.values().next().value}`);
 			} else {
 				console.log(subjectErrorMessages);
 			}
 			const bestErrorMessage = [...subjectErrorMessages.values()].sort((a, b) => b.length - a.length)[0];
-			throw new Error(
+			fail(
 				`It looks like you're trying to open a paper (${"????"} ${seasonChar ?? "x"}${year ?? "??"} ${componentType ?? "xx"} ${componentCode ?? "??"}). If you are, please specify the subject, like this example: (9231 s21 qp 43).`
 				+ (bestErrorMessage ? ` The following error message may be helpful: ${bestErrorMessage}` : "")
 			);
 		} else if(syllabus){
-			throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a syllabus, please specify the subject.");
+			fail("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a syllabus, please specify the subject.");
 		} else {
-			throw new Error("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a paper, enter the information in the form (subject) (season) (type) (code), like this: math s21 qp 43");
+			fail("Pasapapor couldn't figure out what you're trying to open. If you're trying to open a paper, enter the information in the form (subject) (season) (type) (code), like this: math s21 qp 43");
 		}
 
 	}
@@ -305,7 +305,7 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input:s
 		} else if(w){
 			season = `w${year}`;
 		} else {
-			never();
+			impossible();
 		}
 	} else if(syllabusMatchData != null){
 		console.log(`Input matched pattern: syllabus`);
@@ -315,15 +315,13 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input:s
 	} else if(allowSmartParser){
 		console.log(`Input did not match any known patterns, triggering smart parser...`);
 		return smartParseInput(input, level);
-	} else {
-		throw new Error(`Improperly formatted input`);
-	}
+	} else fail(`Improperly formatted input`);
 
-	season = validateSeason(season) ?? (() => {throw new Error(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`)})();
+	season = validateSeason(season) ?? fail(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`);
 	if(isNaN(parseInt(subjectID))) subjectID = getIDFromName(subjectID, level);
-	if(type && !isTypeValid(subjectID, type, code)) throw new Error(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
+	if(type && !isTypeValid(subjectID, type, code)) fail(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
 	if(!type){
-		if(!code) never();
+		if(!code) impossible();
 		return [
 			new Papor(subjectID, season, "ms", code),
 			new Papor(subjectID, season, "qp", code)
@@ -369,7 +367,7 @@ export class Papor implements Openable {
 	level: Level;
 	constructor(public subjectID:string, public season:string, public type:string, public code?:string){
 		this.year = `20${season.slice(1)}`;
-		const data = subjectMapping[subjectID] ?? (() => {throw new Error(`Invalid subject id "${subjectID}"`);})();
+		const data = subjectMapping[subjectID] ?? fail(`Invalid subject id "${subjectID}"`);
 		this.name = data.name;
 		this.level = data.level;
 	}
@@ -395,8 +393,7 @@ export class Papor implements Openable {
 
 
 export function getSyllabusLink(code:string, specifier:string | undefined | null):string {	
-	if(!(code in syllabusData)) throw new Error(`Syllabus unknown for subject id ${code}`);
-	const fragments = syllabusData[code];
+	const fragments = syllabusData[code] ?? fail(`Syllabus unknown for subject id ${code}`);
 	let fragment;
 	if(!specifier) fragment = fragments[0];
 	else if(specifier.length == 1) fragment = fragments[+specifier - 1];
@@ -452,7 +449,7 @@ export function getIDFromName(name:string, level:Level | null):string {
 	if(level == null){
 		const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
 		const igcseGuess = shorthandSubjectNames[Level.IGCSE][name.toLowerCase()];
-		if(aLevelGuess && igcseGuess) throw new Error(`Subject "${name}" could refer to either IGCSE or A Levels. Please specify using the radio buttons.`);
+		if(aLevelGuess && igcseGuess) fail(`Subject "${name}" could refer to either IGCSE or A Levels. Please specify using the radio buttons.`);
 		if(aLevelGuess) return aLevelGuess;
 		if(igcseGuess) return igcseGuess;
 	} else {
@@ -460,7 +457,7 @@ export function getIDFromName(name:string, level:Level | null):string {
 	}
 	const guesses = guessData(name, level);
 	if(guesses.length == 1) return guesses[0][0];
-	if(guesses.length == 0) throw new Error(`Unknown subject "${name}".`);
-	if(guesses.length <= 5) throw new Error(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?${level == null ? " Specifying the level with the radio buttons may help." : ""}`);
-	throw new Error(`Ambiguous subject "${name}".`);
+	if(guesses.length == 0) fail(`Unknown subject "${name}".`);
+	if(guesses.length <= 5) fail(`Ambiguous subject "${name}". Did you mean ${guesses.map(guess => `"${guess[1].name}"`).join(" or ")}?${level == null ? " Specifying the level with the radio buttons may help." : ""}`);
+	fail(`Ambiguous subject "${name}".`);
 }

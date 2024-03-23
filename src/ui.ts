@@ -1,5 +1,5 @@
 import { Level } from "./data.js";
-import { escapeHTML, firstUsePopup, getElement, never } from "./funcs.js";
+import { escapeHTML, firstUsePopup, getElement, impossible } from "./funcs.js";
 import { Papor, getPaporFromInput, providers } from "./papor.js";
 import { Openable } from "./types.js";
 
@@ -60,17 +60,17 @@ export function addListeners(){
 
 	//When a key is pressed
 	pasapaporInput.addEventListener("keydown", (e) => {
-		if(!(e instanceof KeyboardEvent)) never();
+		if(!(e instanceof KeyboardEvent)) impossible();
 		if(e.key == "Enter"){
 			//If it's enter, open papors
 			try {
 				errorbox.className = "success";
 				errorbox.innerText = "";
-				if(pasapaporInput.value.includes("amogus"))
-					throw new Error("Too sus.");
-				else if(/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
+				if(pasapaporInput.value.includes("amogus")) {
+					fail("Too sus.");
+				} else if(/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value)){
 					window.open(`https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
-				else switch(pasapaporInput.value.toLowerCase()){
+				} else switch(pasapaporInput.value.toLowerCase()){
 					case "as": case "a": case "asa": case "as a": case "as/a": case "as / a":
 						buttonAsa.click(); pasapaporInput.value = ""; break;
 					case "ig": case "i": case "igcse":

@@ -1,13 +1,11 @@
 import { addListeners } from "./ui.js";
+import { fail } from "./funcs.js";
 const openedPapors = {
     lsKey: "pasapapor-openedpapers",
     storage: {},
     load() {
         const data = localStorage.getItem(this.lsKey);
         if (data) {
-            function fail(message) {
-                throw new Error(message);
-            }
             try {
                 const dataObj = JSON.parse(data);
                 if (typeof dataObj != "object" || dataObj == null)

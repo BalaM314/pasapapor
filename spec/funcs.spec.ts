@@ -1,9 +1,9 @@
 import "jasmine";
-import { never, replaceMatch } from "../src/funcs.js";
+import { impossible, replaceMatch } from "../src/funcs.js";
 
 describe("never", () => {
 	it("should not return", () => {
-		expect(never).toThrow();
+		expect(impossible).toThrow();
 	});
 });
 

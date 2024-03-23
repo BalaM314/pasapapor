@@ -1,5 +1,5 @@
 import { Level } from "./data.js";
-import { escapeHTML, firstUsePopup, getElement, never } from "./funcs.js";
+import { escapeHTML, firstUsePopup, getElement, impossible } from "./funcs.js";
 import { Papor, getPaporFromInput, providers } from "./papor.js";
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
@@ -55,16 +55,18 @@ export function addListeners() {
     //When a key is pressed
     pasapaporInput.addEventListener("keydown", (e) => {
         if (!(e instanceof KeyboardEvent))
-            never();
+            impossible();
         if (e.key == "Enter") {
             //If it's enter, open papors
             try {
                 errorbox.className = "success";
                 errorbox.innerText = "";
-                if (pasapaporInput.value.includes("amogus"))
-                    throw new Error("Too sus.");
-                else if (/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value))
+                if (pasapaporInput.value.includes("amogus")) {
+                    fail("Too sus.");
+                }
+                else if (/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value)) {
                     window.open(`https://www.youtube.com/watch?v=dQw4w9WgXcQ`);
+                }
                 else
                     switch (pasapaporInput.value.toLowerCase()) {
                         case "as":

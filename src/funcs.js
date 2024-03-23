@@ -14,9 +14,9 @@ export function timeFunction(arg1, arg2) {
         const key = arg2;
         const desc = Object.getOwnPropertyDescriptor(obj, key);
         if (!desc)
-            throw new Error(`Property ${String(key)} does not exist in object ${obj}`);
+            fail(`Property ${String(key)} does not exist in object ${obj}`);
         if (!desc.writable)
-            throw new Error(`Property ${String(key)} is not writeable`);
+            fail(`Property ${String(key)} is not writable`);
         const value = obj[key];
         obj[key] = function (...args) {
             console.time(String(key));
@@ -33,11 +33,11 @@ export function getElement(selector, type) {
     if (elements[0])
         return elements[0];
     if (document.querySelectorAll(selector).length > 1)
-        throw new Error(`No elements matching ${selector} were of type ${type.name}`);
+        fail(`No elements matching ${selector} were of type ${type.name}`);
     else if (document.querySelector(selector))
-        throw new Error(`Element matching ${selector} was of type ${document.querySelector(selector).constructor.name}, not ${type.name}`);
+        fail(`Element matching ${selector} was of type ${document.querySelector(selector).constructor.name}, not ${type.name}`);
     else
-        throw new Error(`No elements matched selector ${selector}`);
+        fail(`No elements matched selector ${selector}`);
 }
 /**
  * Helper function to display a popup on first use of a feature. Do not overuse as getting spammed with alert() is annoying.
@@ -57,7 +57,12 @@ export function firstUsePopup(key, message, callback, runCallbackAfterMessage = 
             callback === null || callback === void 0 ? void 0 : callback();
     }
 }
-export function never() { throw new Error("code failed"); }
+export function impossible() {
+    throw new Error("Unreachable code was reached!");
+}
+export function fail(message) {
+    throw new Error(message);
+}
 export function replaceMatch(string, match, replacement = "") {
     return string.slice(0, match.index) + replacement + string.slice(match.index + match[0].length);
 }

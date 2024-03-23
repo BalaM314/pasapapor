@@ -51,7 +51,7 @@ const tests2 = (
 
 describe("regular parser", () => {
 	for(const [input, level, outputs] of tests1){
-		it(`should parse ${input} with level ${level} to ${outputs.join("+")}`, () => {
+		it(`should parse "${input}" with level ${level} to ${outputs.join("+")}`, () => {
 			expect(getPaporFromInput(input, level, false).map(o => o.cleanString())).toEqual(outputs);
 		});
 	}
@@ -59,7 +59,7 @@ describe("regular parser", () => {
 
 describe("smart parser", () => {
 	for(const [input, level, outputs] of tests2){
-		it(`should parse ${input} with level ${level} to ${outputs.join("+")}`, () => {
+		it(`should parse "${input}" with level ${level} to ${outputs.join("+")}`, () => {
 			expect(smartParseInput(input, level).map(o => o.cleanString())).toEqual(outputs);
 		});
 	}
