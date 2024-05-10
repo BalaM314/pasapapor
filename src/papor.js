@@ -209,7 +209,7 @@ export function smartParseInput(input, level) {
                 continue;
             try {
                 console.log(`Checking <<${str.trim()}>>`);
-                subjectCode = getIDFromName(str.trim(), level);
+                subjectCode = getIDFromName(str.trim(), level, seasonChar && year ? `${seasonChar}${year}` : null);
                 console.log(`Found subject code ${subjectCode}`);
                 break;
             }
@@ -226,7 +226,7 @@ export function smartParseInput(input, level) {
                     continue;
                 try {
                     console.log(`Checking <<${str.trim()}>>`);
-                    subjectCode = getIDFromName(str.trim(), level);
+                    subjectCode = getIDFromName(str.trim(), level, seasonChar && year ? `${seasonChar}${year}` : null);
                     console.log(`Found subject code ${subjectCode}`);
                     break;
                 }
@@ -346,7 +346,7 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
         console.log(`Input matched pattern: syllabus`);
         let [, subjectID, specifier] = syllabusMatchData;
         if (isNaN(parseInt(subjectID)))
-            subjectID = getIDFromName(subjectID, level);
+            subjectID = getIDFromName(subjectID, level, null);
         return [{ url: () => getSyllabusLink(subjectID, specifier), cleanString: () => `${subjectID} syllabus` }];
     }
     else if (allowSmartParser) {
@@ -357,7 +357,7 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
         fail(`Improperly formatted input`);
     season = (_a = validateSeason(season)) !== null && _a !== void 0 ? _a : fail(`Invalid season ${season}: must be of the format (season)(year) where season is f, m, s, j, w, o, or n, and year is a 1 or 2 digit year.`);
     if (isNaN(parseInt(subjectID)))
-        subjectID = getIDFromName(subjectID, level);
+        subjectID = getIDFromName(subjectID, level, season);
     if (type && !isTypeValid(subjectID, type, code))
         fail(`Type ${type} is not a valid type for component ${subjectID}/${code}`);
     if (!type) {
@@ -492,24 +492,36 @@ export function validateSeason(season) {
     return processedSeason + processedYear;
 }
 /** Gets the subject id from entered string name. Throws if too many or no results. */
-export function getIDFromName(name, level) {
+export function getIDFromName(name, level, season) {
     if (level == null) {
         const aLevelGuess = shorthandSubjectNames[Level.A_LEVELS][name.toLowerCase()];
         const igcseGuess = shorthandSubjectNames[Level.IGCSE][name.toLowerCase()];
         if (aLevelGuess && igcseGuess)
             fail(`Subject "${name}" could refer to either IGCSE or A Levels. Please specify using the radio buttons.`);
-        if (aLevelGuess)
+        if (aLevelGuess) {
+            //Special handling for 9608/9618
+            if (season && Number(season.slice(1)) <= 20 && aLevelGuess == "9618")
+                return "9608";
             return aLevelGuess;
+        }
         if (igcseGuess)
             return igcseGuess;
     }
     else {
-        if (shorthandSubjectNames[level][name.toLowerCase()])
-            return shorthandSubjectNames[level][name.toLowerCase()];
+        const shorthandID = shorthandSubjectNames[level][name.toLowerCase()];
+        if (shorthandID) {
+            if (season && Number(season.slice(1)) <= 20 && shorthandID == "9618")
+                return "9608";
+            return shorthandID;
+        }
     }
     const guesses = guessData(name, level);
-    if (guesses.length == 1)
+    if (guesses.length == 1) {
+        //Special handling for 9608/9618
+        if (season && Number(season.slice(1)) <= 20 && guesses[0][0] == "9618")
+            return "9608";
         return guesses[0][0];
+    }
     if (guesses.length == 0)
         fail(`Unknown subject "${name}".`);
     if (guesses.length <= 5)

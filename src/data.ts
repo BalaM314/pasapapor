@@ -88,7 +88,7 @@ export const shorthandSubjectNames = ((data:{
 		"9709": ["math", "mathematics"],
 		"9093": ["eng", "english", "el"],
 		"9608": ["cso", "ocs"],
-		"9618": ["cs", "compsci"],
+		"9618": ["cs", "compsci"], //changes to 9608 if season is 2020 or earlier with special handling
 		"9231": ["further math", "f math", "fmath", "math f", "mathf", "math further", "meth"],
 		"9990": ["psy", "psych", "psycho", "psychology"],
 	},
