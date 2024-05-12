@@ -365,8 +365,9 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
             impossible();
         return [
             new Papor(subjectID, season, "ms", code),
-            new Papor(subjectID, season, "qp", code)
-        ];
+            new Papor(subjectID, season, "qp", code),
+            ["9618", "9608"].includes(subjectID) && /^4.$/.test(code) && new Papor(subjectID, season, "sf", code)
+        ].filter(Boolean);
     }
     else {
         return [new Papor(subjectID, season, type, code)];

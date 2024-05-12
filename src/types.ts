@@ -4,6 +4,7 @@ export interface Openable {
 	url(): string;
 	cleanString(): string;
 }
+export type Truthy<T> = T extends (false | null | undefined) ? never : T;
 
 export type FunctionProps<T,
 	_TKeys extends keyof T = keyof T
@@ -53,6 +54,7 @@ declare global {
 		 * @param fromIndex The position in this array at which to begin searching for searchElement.
 		 */
 		includes(searchElement:unknown, fromIndex?:number):searchElement is T;
+		filter(predicate: BooleanConstructor): Truthy<T>[];
 	}
 	interface ReadonlyArray<T> {
 		/**
