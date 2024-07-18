@@ -376,12 +376,12 @@ export const getPaporFromInput = timeFunction(function getPaporFromInput(input, 
 export const providers = {
     gceguide: {
         name: "GCE Guide",
-        site: "https://papers.gceguide.com/",
+        site: "https://gceguide.cc/papers",
         getURL(papor) {
             const filetype = papor.type == "sf" ? "zip" : "pdf";
             return papor.code != undefined ?
-                `https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
-                `https://papers.gceguide.com/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+                `https://gceguide.cc/papers/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
+                `https://gceguide.cc/papers/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
         }
     },
     xtremepapers: {
