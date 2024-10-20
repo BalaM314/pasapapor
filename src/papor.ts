@@ -1,5 +1,5 @@
 import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
-import { impossible, replaceMatch, timeFunction, fail } from "./funcs.js";
+import { impossible, replaceMatch, timeFunction, fail, match } from "./funcs.js";
 import { Openable, SubjectData } from "./types.js";
 
 export function isTypeValid(subjectID:string, type:string, code:string | undefined):boolean {
@@ -341,12 +341,16 @@ interface PaporProvider {
 export const providers = {
 	gceguide: {
 		name: "GCE Guide",
-		site: "https://gceguide.cc/papers",
+		site: "https://papers.gceguide.cc/",
 		getURL(papor){
 			const filetype = papor.type == "sf" ? "zip" : "pdf";
-		return papor.code != undefined ?
-			`https://gceguide.cc/papers/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
-			`https://gceguide.cc/papers/${papor.level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+			const level = match(papor.level, {
+				"A Levels": "a-levels",
+				"Cambridge IGCSE": "cambridge-IGCSE",
+			});
+			return papor.code != undefined ?
+				`https://papers.gceguide.cc/${level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
+				`https://papers.gceguide.cc/${level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
 		}
 	},
 	xtremepapers: {

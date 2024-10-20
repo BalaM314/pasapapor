@@ -69,3 +69,6 @@ export function replaceMatch(string, match, replacement = "") {
 export function escapeHTML(input) {
     return input.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(`"`, "&quot;").replaceAll(`'`, "&apos;");
 }
+export function match(value, clauses, defaultValue) {
+    return value in clauses ? clauses[value] : defaultValue;
+}

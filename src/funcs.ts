@@ -70,3 +70,9 @@ export function replaceMatch(string:string, match:RegExpMatchArray, replacement 
 export function escapeHTML(input:string):string {
 	return input.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(`"`, "&quot;").replaceAll(`'`, "&apos;");
 }
+
+export function match<K extends PropertyKey, O extends Record<K, unknown>>(value:K, clauses:O):O[K];
+export function match<K extends PropertyKey, O extends Partial<Record<K, unknown>>, D>(value:K, clauses:O, defaultValue:D):O[K] | D;
+export function match(value:PropertyKey, clauses:Record<PropertyKey, unknown>, defaultValue?:unknown):unknown {
+	return value in clauses ? clauses[value] : defaultValue;
+}
