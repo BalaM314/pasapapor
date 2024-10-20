@@ -29,7 +29,6 @@ export const subjectIDs = {
 	[Level.A_LEVELS]: ["8001","8004","8021","8024","8041","8053","8058","8281","8291","8663","8665","8670","8672","8673","8675","8679","8680","8681","8682","8683","8684","8685","8686","8687","8689","8695","8779","9011","9013","9014","9084","9093","9231","9239","9274","9336","9389","9395","9396","9479","9481","9482","9483","9484","9488","9489","9607","9608","9609","9618","9626","9631","9676","9679","9680","9686","9687","9689","9691","9693","9694","9695","9696","9698","9699","9700","9701","9702","9703","9704","9705","9706","9707","9708","9709","9713","9715","9716","9717","9718","9719","9980","9990"],
 };
 
-//TODO fully cleanup: this is the GCEGuide name, we should use the rawsubjectdata name
 export const subjectNamesXtremePapers: Record<string, string> = {
 	//copy(JSON.stringify(Object.fromEntries(Array.from(document.querySelectorAll("a.directory")).slice(1).map(a => a.href.split("https://papers.xtremepape.rs/index.php?dirpath=./CAIE/IGCSE/")[1].split("/&order=0")[0]).map(c => [c.match(/%28(\d+)%29/)?.[1], decodeURIComponent(c).replaceAll("+", " ")]).filter(a => a[0]).sort(([a], [b]) => +a - +b))))
 	//copy(JSON.stringify(Object.fromEntries(Array.from(document.querySelectorAll("a.directory")).slice(1).map(a => a.href.split("https://papers.xtremepape.rs/index.php?dirpath=./CAIE/AS+and+A+Level/")[1].split("/&order=0")[0]).map(c => [c.match(/%28(\d+)%29/)?.[1], decodeURIComponent(c).replaceAll("+", " ")]).filter(a => a[0]).sort(([a], [b]) => +a - +b))))

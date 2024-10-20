@@ -11,7 +11,7 @@ const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const buttonSourceGce = getElement("input#source-gceguide", HTMLInputElement);
 const buttonSourceXtr = getElement("input#source-xtremepapers", HTMLInputElement);
-const errorbox = getElement("#errorbox", HTMLDivElement); //TODO rename to output box
+const outputBox = getElement("#output-box", HTMLDivElement);
 const headerText = getElement("#header-text", HTMLSpanElement);
 const header = getElement("#header", HTMLDivElement);
 const formatExplanation = getElement("#format-explanation", HTMLDivElement);
@@ -53,7 +53,7 @@ export function getURL(input:Openable){
 }
 
 export function addListeners(){
-	errorbox.innerText = "";
+	outputBox.innerText = "";
 
 	const firstLoad = localStorage.getItem("pasapapor-first-load") === null;
 	localStorage.setItem("pasapapor-first-load", "false");
@@ -64,8 +64,8 @@ export function addListeners(){
 		if(e.key == "Enter"){
 			//If it's enter, open papors
 			try {
-				errorbox.className = "success";
-				errorbox.innerText = "";
+				outputBox.className = "success";
+				outputBox.innerText = "";
 				if(pasapaporInput.value.includes("amogus")) {
 					fail("Too sus.");
 				} else if(/never.*gonna.*give.*you.*up/i.test(pasapaporInput.value)){
@@ -83,12 +83,12 @@ export function addListeners(){
 								papors.forEach(papor => window.open(getURL(papor), "_blank"));
 							}, true);
 						}
-						errorbox.innerHTML = `✔ Opened: ${papors.map(papor => `<a href="${getURL(papor)}">${escapeHTML(papor.cleanString())}</a>`).join(", ")}`;
+						outputBox.innerHTML = `✔ Opened: ${papors.map(papor => `<a href="${getURL(papor)}">${escapeHTML(papor.cleanString())}</a>`).join(", ")}`;
 						break;
 				}
 			} catch(err){
-				errorbox.className = "error";
-				errorbox.innerText = `❗ ${(err as Error).message}`;
+				outputBox.className = "error";
+				outputBox.innerText = `❗ ${(err as Error).message}`;
 			}
 		}
 	});
@@ -116,7 +116,6 @@ export function addListeners(){
 	}
 	const savedSource = localStorage.getItem("pasapapor-source");
 	if(savedSource != null && savedSource in providers){
-		//TODO fix this... proper config system...
 		if(savedSource == "gceguide") buttonSourceGce.click();
 		else if(savedSource == "xtremepapers") buttonSourceXtr.click();
 	}
