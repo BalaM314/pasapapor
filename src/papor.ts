@@ -73,12 +73,14 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 	//TODO: attempt to search for each component multiple times, with progressively decreasing strictness
 
 	//Attempt to find season
-	const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)[^a-z0-9]*(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
-	//Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
+	//Long season name followed by spacers, or single-char season name directly adjacent, or single char season name that is not connected to another word
+	//https://github.com/tc39/proposal-duplicate-named-capturing-groups
+	const x00Match = input.match(/(?:(?<season1>spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)[^a-z0-9]*|(?<season2>f|m|s|j|w|o|n)|(?<![a-z])(?<season3>f|m|s|j|w|o|n)[^a-z0-9]*)(?<year>20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
 	//4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
 	//Negative lookahead used to match s209701 but not s9702
 	if(x00Match){
-		const [, _season, _year] = x00Match;
+		const _year = x00Match.groups!.year;
+		const _season = x00Match.groups!.season1 ?? x00Match.groups!.season2 ?? x00Match.groups!.season3 ?? impossible();
 		const char = resolveSeasonChar(_season);
 		if(char) seasonChar = char;
 		else impossible();
@@ -183,7 +185,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 		//TODO handle stuff like further___math
 		//TODO duped code here
 		for(const str of remainingStrings){
-			if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
+			if(str.trim() == "" || ["the", "of", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
 			try {
 				console.log(`Checking <<${str.trim()}>>`);
 				subjectCode = getIDFromName(str.trim(), level, seasonChar && year ? `${seasonChar}${year}` : null);
@@ -198,7 +200,7 @@ export function smartParseInput(input:string, level:Level | null):Openable[] {
 			//Try a different match
 			remainingStrings = input.match(/[a-z]+/g) ?? [];
 			for(const str of remainingStrings){
-				if(str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
+				if(str.trim() == "" || ["the", "of", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim())) continue;
 				try {
 					console.log(`Checking <<${str.trim()}>>`);
 					subjectCode = getIDFromName(str.trim(), level, seasonChar && year ? `${seasonChar}${year}` : null);

@@ -1,6 +1,6 @@
 import { Level, subjectMapping, subjectNamesGce, subjectNamesXtremePapers } from "./data.js";
 import { escapeHTML, firstUsePopup, getElement, impossible } from "./funcs.js";
-import { Papor, getPaporFromInput, guessData, providers } from "./papor.js";
+import { Papor, getPaporFromInput, guessData, providers, smartParseInput } from "./papor.js";
 //HTML elements
 const pasapaporInput = getElement("#pasapapor-select", HTMLInputElement);
 const levelSelectDiv = getElement("#level-select", HTMLDivElement);
@@ -219,7 +219,7 @@ export function addListeners() {
         }
     });
     Object.assign(window, {
-        getPaporFromInput, Papor, guessData, subjectMapping, subjectNamesGce, subjectNamesXtremePapers
+        getPaporFromInput, Papor, guessData, subjectMapping, subjectNamesGce, subjectNamesXtremePapers, smartParseInput
     });
 }
 ;

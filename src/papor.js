@@ -56,7 +56,7 @@ export function smartParseInput(input, level) {
     //Pasapapor
     //Pasapapor with type omitted indicating QP and MS
     //Grade threshold or examiner report
-    var _a, _b;
+    var _a, _b, _c, _d, _e;
     //4 digit numbers could mean either a year or a subject code; use the first 2 digits of the number to decide.
     //2 digit numbers can mean either a year or a component code; parse [a-z]23 as a year, but 23 by itself is ambiguous. Possibly use positioning?
     //"s" without numbers directly after means syllabus
@@ -73,12 +73,14 @@ export function smartParseInput(input, level) {
     let syllabus = false, year = null, seasonChar = null, subjectCode = null, componentCode = null, componentType = null, syllabusRawYearSpecifier = null;
     //TODO: attempt to search for each component multiple times, with progressively decreasing strictness
     //Attempt to find season
-    const x00Match = input.match(/(spring|feb|march|mar|f|m|summer|may|june|jun|s|j|winter|october|november|oct|nov|w|o|n)[^a-z0-9]*(20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
-    //Negative lookbehind (?<![a-z]) could be used to not match strings such as phy(s20), but 
+    //Long season name followed by spacers, or single-char season name directly adjacent, or single char season name that is not connected to another word
+    //https://github.com/tc39/proposal-duplicate-named-capturing-groups
+    const x00Match = input.match(/(?:(?<season1>spring|feb|march|mar|summer|may|june|jun|winter|october|november|oct|nov)[^a-z0-9]*|(?<season2>f|m|s|j|w|o|n)|(?<![a-z])(?<season3>f|m|s|j|w|o|n)[^a-z0-9]*)(?<year>20\d\d|\d\d|\d)(?!\d{2,3}(?:\D|$))/);
     //4 digit year: restricted to 20xx to match s2022 but not s9702 (should be parsed as "syllabus" "9702") (no subject codes start with 20)
     //Negative lookahead used to match s209701 but not s9702
     if (x00Match) {
-        const [, _season, _year] = x00Match;
+        const _year = x00Match.groups.year;
+        const _season = (_c = (_b = (_a = x00Match.groups.season1) !== null && _a !== void 0 ? _a : x00Match.groups.season2) !== null && _b !== void 0 ? _b : x00Match.groups.season3) !== null && _c !== void 0 ? _c : impossible();
         const char = resolveSeasonChar(_season);
         if (char)
             seasonChar = char;
@@ -201,11 +203,11 @@ export function smartParseInput(input, level) {
     let subjectErrorMessages = new Set; //very cursed but it works
     if (subjectCode == null) {
         console.log(`Parsing remaining input to find subject code <<${input}>>`);
-        remainingStrings = (_a = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _a !== void 0 ? _a : []; //this regex is probably O(n^2) or worse
+        remainingStrings = (_d = input.match(/[a-z ]*[a-z][a-z ]*/g)) !== null && _d !== void 0 ? _d : []; //this regex is probably O(n^2) or worse
         //TODO handle stuff like further___math
         //TODO duped code here
         for (const str of remainingStrings) {
-            if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
+            if (str.trim() == "" || ["the", "of", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
                 continue;
             try {
                 console.log(`Checking <<${str.trim()}>>`);
@@ -220,9 +222,9 @@ export function smartParseInput(input, level) {
         console.log(`Parsing remaining input again but with different splitting logic`);
         if (subjectCode == null) {
             //Try a different match
-            remainingStrings = (_b = input.match(/[a-z]+/g)) !== null && _b !== void 0 ? _b : [];
+            remainingStrings = (_e = input.match(/[a-z]+/g)) !== null && _e !== void 0 ? _e : [];
             for (const str of remainingStrings) {
-                if (str.trim() == "" || ["the", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
+                if (str.trim() == "" || ["the", "of", "to", "and", "for", "he", "his", "me", "no", "them", "first", "us", "paper"].includes(str.trim()))
                     continue;
                 try {
                     console.log(`Checking <<${str.trim()}>>`);
