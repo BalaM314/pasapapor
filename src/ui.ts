@@ -1,6 +1,6 @@
-import { Level } from "./data.js";
+import { Level, subjectMapping, subjectNamesGce, subjectNamesXtremePapers } from "./data.js";
 import { escapeHTML, firstUsePopup, getElement, impossible } from "./funcs.js";
-import { Papor, getPaporFromInput, providers } from "./papor.js";
+import { Papor, getPaporFromInput, guessData, providers } from "./papor.js";
 import { Openable } from "./types.js";
 
 //HTML elements
@@ -196,6 +196,10 @@ export function addListeners(){
 		if(localStorage.getItem("theme") == "light") setTheme("dark");
 		else if(localStorage.getItem("theme") == "dark") setTheme("light");
 		else { console.warn("Theme is invalid"); setTheme("dark"); }
+	});
+
+	Object.assign(window, {
+		getPaporFromInput, Papor, guessData, subjectMapping, subjectNamesGce, subjectNamesXtremePapers
 	});
 };
 

@@ -26,7 +26,6 @@ export interface PasapaporData {
 	date: number;
 }
 
-export type SubjectMapping = Record<string, SubjectData>;
 
 export interface SubjectData {
 	id: string;

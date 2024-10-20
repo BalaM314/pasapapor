@@ -1,4 +1,4 @@
-import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, syllabusData } from "./data.js";
+import { Level, otherDocuments, shorthandSubjectNames, subjectMapping, subjectNamesGce, subjectNamesXtremePapers, syllabusData } from "./data.js";
 import { impossible, replaceMatch, timeFunction, fail, match } from "./funcs.js";
 export function isTypeValid(subjectID, type, code) {
     switch (type) {
@@ -383,9 +383,10 @@ export const providers = {
                 "A Levels": "a-levels",
                 "Cambridge IGCSE": "cambridge-IGCSE",
             });
+            const name = subjectNamesGce[papor.subjectID];
             return papor.code != undefined ?
-                `https://papers.gceguide.cc/${level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
-                `https://papers.gceguide.cc/${level}/${papor.name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+                `https://papers.gceguide.cc/${level}/${name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
+                `https://papers.gceguide.cc/${level}/${name}/${papor.year}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
         }
     },
     xtremepapers: {
@@ -393,9 +394,14 @@ export const providers = {
         site: "https://papers.xtremepape.rs/",
         getURL(papor) {
             const filetype = papor.type == "sf" ? "zip" : "pdf";
+            const level = match(papor.level, {
+                "A Levels": "AS and A Level",
+                "Cambridge IGCSE": "IGCSE"
+            });
+            const name = encodeURIComponent(subjectNamesXtremePapers[papor.subjectID]);
             return papor.code != undefined ?
-                `https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
-                `https://papers.xtremepape.rs/CAIE/${papor.level == Level.A_LEVELS ? "AS and A Level" : "IGCSE"}/${papor.name}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+                `https://papers.xtremepape.rs/CAIE/${level}/${name}/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` :
+                `https://papers.xtremepape.rs/CAIE/${level}/${name}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
         }
     },
 };
@@ -408,9 +414,7 @@ export class Papor {
         this.type = type;
         this.code = code;
         this.year = `20${season.slice(1)}`;
-        const data = (_a = subjectMapping[subjectID]) !== null && _a !== void 0 ? _a : fail(`Invalid subject id "${subjectID}"`);
-        this.name = data.name;
-        this.level = data.level;
+        this.level = ((_a = subjectMapping[subjectID]) !== null && _a !== void 0 ? _a : fail(`Invalid subject id "${subjectID}"`)).level;
     }
     url(provider = "gceguide") {
         return providers[provider].getURL(this);
