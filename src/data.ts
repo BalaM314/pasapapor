@@ -13,7 +13,7 @@ export const otherDocuments: {
 ))([
 	["https://www.cambridgeinternational.org/images/423525-list-of-formulae-and-statistical-tables.pdf", "mf9", "mf09", "math mf9", "math mf09"],
 	["https://www.cambridgeinternational.org/Images/417318-list-of-formulae-and-statistical-tables.pdf", "mf19", "math mf19"],
-	["https://papers.gceguide.com/A%20Levels/Mathematics%20-%20Further%20(9231)/Other%20Resources/MF10.pdf", "mf10", "math mf10"],
+	["https://papers.gceguide.cc/a-levels/mathematics-further-(9231)/Other%20Resources/MF10.pdf", "mf10", "math mf10"],
 	["https://www.cambridgeinternational.org/images/344616-list-of-formulae-and-statistical-tables.pdf", "mf20", "math mf20"],
 	["https://www.seab.gov.sg/content/syllabus/alevel/2017Syllabus/ListMF26.pdf", "mf26", "math mf26"],
 	["https://www.cambridgeinternational.org/Images/164870-2016-specimen-data-booklet.pdf", "db", "chem db", "data booklet", "chem data booklet", "chemistry data booklet", "9701 db"]
