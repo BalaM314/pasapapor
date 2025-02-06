@@ -371,7 +371,18 @@ export const providers = {
 				`https://papers.xtremepape.rs/CAIE/${level}/${name}/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
 		}
 	},
+	papacambridge: {
+		name: "PapaCambridge",
+		site: "https://pastpapers.papacambridge.com/",
+		getURL(papor){
+			const filetype = papor.type == "sf" ? "zip" : "pdf";
+			return papor.code != undefined ?
+				`https://pastpapers.papacambridge.com/directories/CAIE/CAIE-pastpapers/upload/${papor.subjectID}_${papor.season}_${papor.type}_${papor.code}.${filetype}` : 
+				`https://pastpapers.papacambridge.com/directories/CAIE/CAIE-pastpapers/upload/${papor.subjectID}_${papor.season}_${papor.type}.${filetype}`;
+		}
+	},
 } satisfies Record<string, PaporProvider>;
+Object.setPrototypeOf(providers, null);
 
 /** Represents a pasapapor. */
 export class Papor implements Openable {
@@ -386,7 +397,7 @@ export class Papor implements Openable {
 		this.year = `20${season.slice(1)}`;
 		this.level = (subjectMapping[subjectID] ?? fail(`Invalid subject id "${subjectID}"`)).level;
 	}
-	url(provider:keyof typeof providers = "gceguide"){
+	url(provider:keyof typeof providers = "papacambridge"){
 		return providers[provider].getURL(this);
 	}
 	toString(){

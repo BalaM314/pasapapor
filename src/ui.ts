@@ -11,6 +11,7 @@ const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
 const buttonSourceGce = getElement("input#source-gceguide", HTMLInputElement);
 const buttonSourceXtr = getElement("input#source-xtremepapers", HTMLInputElement);
+const buttonSourcePpc = getElement("input#source-papacambridge", HTMLInputElement);
 const outputBox = getElement("#output-box", HTMLDivElement);
 const headerText = getElement("#header-text", HTMLSpanElement);
 const header = getElement("#header", HTMLDivElement);
@@ -108,6 +109,7 @@ export function addListeners(){
 	buttonIgcse.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.IGCSE));
 	buttonSourceGce.addEventListener("change", () => localStorage.setItem("pasapapor-source", "gceguide"));
 	buttonSourceXtr.addEventListener("change", () => localStorage.setItem("pasapapor-source", "xtremepapers"));
+	buttonSourcePpc.addEventListener("change", () => localStorage.setItem("pasapapor-source", "papacambridge"));
 
 	//Load saved level
 	switch(localStorage.getItem("pasapapor-level")){
@@ -118,6 +120,7 @@ export function addListeners(){
 	if(savedSource != null && savedSource in providers){
 		if(savedSource == "gceguide") buttonSourceGce.click();
 		else if(savedSource == "xtremepapers") buttonSourceXtr.click();
+		else if(savedSource == "papacambridge") buttonSourceXtr.click();
 	}
 
 	let flashing = false;
