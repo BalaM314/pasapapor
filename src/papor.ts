@@ -383,6 +383,7 @@ export const providers = {
 	},
 } satisfies Record<string, PaporProvider>;
 Object.setPrototypeOf(providers, null);
+export type PaporProviderName = keyof typeof providers;
 
 /** Represents a pasapapor. */
 export class Papor implements Openable {
@@ -397,7 +398,7 @@ export class Papor implements Openable {
 		this.year = `20${season.slice(1)}`;
 		this.level = (subjectMapping[subjectID] ?? fail(`Invalid subject id "${subjectID}"`)).level;
 	}
-	url(provider:keyof typeof providers = "papacambridge"){
+	url(provider:PaporProviderName = "papacambridge"){
 		return providers[provider].getURL(this);
 	}
 	toString(){

@@ -1,6 +1,6 @@
 import { Level, subjectMapping, subjectNamesGce, subjectNamesXtremePapers } from "./data.js";
 import { escapeHTML, firstUsePopup, getElement, impossible } from "./funcs.js";
-import { Papor, getPaporFromInput, guessData, providers, smartParseInput } from "./papor.js";
+import { Papor, PaporProviderName, getPaporFromInput, guessData, providers, smartParseInput } from "./papor.js";
 import { Openable } from "./types.js";
 
 //HTML elements
@@ -9,9 +9,6 @@ const levelSelectDiv = getElement("#level-select", HTMLDivElement);
 const sourceSelectDiv = getElement("#source-select", HTMLDivElement);
 const buttonIgcse = getElement("input#igcse", HTMLInputElement);
 const buttonAsa = getElement("input#as-a", HTMLInputElement);
-const buttonSourceGce = getElement("input#source-gceguide", HTMLInputElement);
-const buttonSourceXtr = getElement("input#source-xtremepapers", HTMLInputElement);
-const buttonSourcePpc = getElement("input#source-papacambridge", HTMLInputElement);
 const outputBox = getElement("#output-box", HTMLDivElement);
 const headerText = getElement("#header-text", HTMLSpanElement);
 const header = getElement("#header", HTMLDivElement);
@@ -30,9 +27,9 @@ export function getSelectedLevel():Level | null {
 	else return null;
 }
 
-export function getSelectedSource():keyof typeof providers | null;
-export function getSelectedSource(def:keyof typeof providers):keyof typeof providers;
-export function getSelectedSource(def:keyof typeof providers | null = null):keyof typeof providers | null {
+export function getSelectedSource():PaporProviderName | null;
+export function getSelectedSource(def:PaporProviderName):PaporProviderName;
+export function getSelectedSource(def:PaporProviderName | null = null):PaporProviderName | null {
 	const value = Array.from(sourceSelectDiv.children).filter(
 		(el):el is HTMLInputElement => el instanceof HTMLInputElement && el.checked
 	)[0]?.value;
@@ -107,9 +104,9 @@ export function addListeners(){
 	//When the selected level is changed
 	buttonAsa.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.A_LEVELS));
 	buttonIgcse.addEventListener("change", () => localStorage.setItem("pasapapor-level", Level.IGCSE));
-	buttonSourceGce.addEventListener("change", () => localStorage.setItem("pasapapor-source", "gceguide"));
-	buttonSourceXtr.addEventListener("change", () => localStorage.setItem("pasapapor-source", "xtremepapers"));
-	buttonSourcePpc.addEventListener("change", () => localStorage.setItem("pasapapor-source", "papacambridge"));
+	document.querySelectorAll(`#source-select > input[type=radio]`).forEach(input => {
+		input.addEventListener("change", () => localStorage.setItem("pasapapor-source", (input as HTMLInputElement).value));
+	});
 
 	//Load saved level
 	switch(localStorage.getItem("pasapapor-level")){
@@ -118,9 +115,7 @@ export function addListeners(){
 	}
 	const savedSource = localStorage.getItem("pasapapor-source");
 	if(savedSource != null && savedSource in providers){
-		if(savedSource == "gceguide") buttonSourceGce.click();
-		else if(savedSource == "xtremepapers") buttonSourceXtr.click();
-		else if(savedSource == "papacambridge") buttonSourceXtr.click();
+		(document.querySelector(`#source-select > input#source-${savedSource}`) as HTMLInputElement | null)?.click();
 	}
 
 	let flashing = false;
