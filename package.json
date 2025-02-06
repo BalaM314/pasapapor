@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"test": "jasmine",
-		"start": "tsc --watch"
+		"watch": "tsc --watch"
 	},
 	"keywords": [],
 	"author": "BalaM314",
